@@ -11,13 +11,14 @@ interface OtpInputProps {
 
 export default function OtpInput({
   length = 6,
-  value,
+  value = '',
   onChange,
   error,
 }: OtpInputProps) {
   const inputsRef = useRef<(HTMLInputElement | null)[]>([]);
 
-  const digits = value.split('').concat(Array(length).fill('')).slice(0, length);
+  // Safe split that handles undefined or null values
+  const digits = (value || '').split('').concat(Array(length).fill('')).slice(0, length);
 
   const focusInput = useCallback(
     (index: number) => {
@@ -29,6 +30,7 @@ export default function OtpInput({
 
   const handleChange = useCallback(
     (index: number, char: string) => {
+      // Allow only numbers
       if (char && !/^\d$/.test(char)) return;
 
       const newDigits = [...digits];
@@ -36,8 +38,12 @@ export default function OtpInput({
       const newOtp = newDigits.join('');
       onChange(newOtp);
 
+      // Shift focus forward if we entered a digit
       if (char && index < length - 1) {
-        focusInput(index + 1);
+        // Use timeout to ensure DOM update is finished
+        setTimeout(() => {
+          focusInput(index + 1);
+        }, 10);
       }
     },
     [digits, onChange, length, focusInput]
@@ -72,7 +78,8 @@ export default function OtpInput({
         .replace(/\D/g, '')
         .slice(0, length);
       if (pasted) {
-        onChange(pasted.padEnd(length, '').slice(0, length).replace(/ /g, ''));
+        onChange(pasted.padEnd(length, '').slice(0, length));
+        // Focus the last filled box or the next empty one
         focusInput(Math.min(pasted.length, length - 1));
       }
     },
@@ -80,8 +87,11 @@ export default function OtpInput({
   );
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-center gap-2" onPaste={handlePaste}>
+    <div className="flex flex-col gap-2 w-full">
+      <div 
+        className="grid grid-cols-6 gap-2 sm:gap-3 w-full max-w-[360px] xs:max-w-[400px] sm:max-w-[440px] mx-auto py-2"
+        onPaste={handlePaste}
+      >
         {Array.from({ length }).map((_, i) => {
           const filled = !!digits[i];
           return (
@@ -99,23 +109,21 @@ export default function OtpInput({
               onFocus={(e) => e.target.select()}
               aria-label={`Digit ${i + 1}`}
               className={[
-                "w-[48px] h-[56px] text-center font-['Space_Grotesk'] text-2xl font-semibold",
-                'border-2 rounded-lg outline-none',
-                'transition-all duration-150',
-                'focus:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] focus:-translate-x-[1px] focus:-translate-y-[1px] focus:border-[#ff5e00] focus:bg-[#fff5f0]',
-                'shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
+                "w-full aspect-[4/5] text-center font-['Space_Grotesk'] text-xl xs:text-2xl sm:text-3xl font-bold",
+                "border-2 sm:border-[3px] rounded-xl outline-none transition-all duration-150 select-all",
+                "focus:-translate-x-[2px] focus:-translate-y-[2px] focus:shadow-[4px_4px_0px_0px_rgba(28,27,27,1)] focus:border-primary focus:bg-primary-container/10",
                 error
-                  ? 'border-[#ba1a1a] bg-[#ffdad6]'
+                  ? "border-error bg-error-container text-error shadow-[2px_2px_0px_0px_rgba(186,26,26,1)]"
                   : filled
-                    ? 'border-[#aa3000] bg-[#ffdbd0] text-[#aa3000]'
-                    : 'border-[#1c1b1b] bg-[#fcf9f8] text-[#1c1b1b]',
+                  ? "border-primary bg-primary-container text-primary shadow-[2px_2px_0px_0px_rgba(170,48,0,1)]"
+                  : "border-[#1c1b1b] bg-white text-[#1c1b1b] shadow-[2px_2px_0px_0px_rgba(28,27,27,1)]",
               ].join(' ')}
             />
           );
         })}
       </div>
       {error && (
-        <p className="text-xs text-[#ba1a1a] font-['DM_Sans'] text-center flex items-center justify-center gap-1">
+        <p className="text-xs text-error font-['DM_Sans'] text-center flex items-center justify-center gap-1 mt-1">
           <span className="material-symbols-outlined text-[14px]">error</span>
           {error}
         </p>

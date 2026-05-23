@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useRef, useCallback, useEffect, FormEvent, KeyboardEvent, ClipboardEvent, Suspense } from 'react';
+import { useState, useEffect, FormEvent, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
+import OtpInput from '@/components/ui/OtpInput';
 
 const OTP_LENGTH = 6;
 const RESEND_COUNTDOWN = 60;
@@ -14,13 +15,11 @@ function VerifyContent() {
   const email = searchParams.get('email') ?? '';
   const redirectTo = searchParams.get('redirect') ?? '/';
 
-  const [otp, setOtp] = useState<string[]>(Array(OTP_LENGTH).fill(''));
+  const [otp, setOtp] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [countdown, setCountdown] = useState(RESEND_COUNTDOWN);
   const [resending, setResending] = useState(false);
-
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Countdown timer
   useEffect(() => {
@@ -29,52 +28,9 @@ function VerifyContent() {
     return () => clearInterval(timer);
   }, [countdown]);
 
-  const focusInput = useCallback((index: number) => {
-    inputRefs.current[index]?.focus();
-  }, []);
-
-  function handleChange(index: number, value: string) {
-    if (!/^\d?$/.test(value)) return;
-
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
-    setError('');
-
-    if (value && index < OTP_LENGTH - 1) {
-      focusInput(index + 1);
-    }
-  }
-
-  function handleKeyDown(index: number, e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === 'Backspace' && !otp[index] && index > 0) {
-      focusInput(index - 1);
-    }
-    if (e.key === 'ArrowLeft' && index > 0) {
-      focusInput(index - 1);
-    }
-    if (e.key === 'ArrowRight' && index < OTP_LENGTH - 1) {
-      focusInput(index + 1);
-    }
-  }
-
-  function handlePaste(e: ClipboardEvent<HTMLInputElement>) {
-    e.preventDefault();
-    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, OTP_LENGTH);
-    if (!pasted) return;
-
-    const newOtp = [...otp];
-    for (let i = 0; i < pasted.length; i++) {
-      newOtp[i] = pasted[i];
-    }
-    setOtp(newOtp);
-    focusInput(Math.min(pasted.length, OTP_LENGTH - 1));
-  }
-
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
-    const code = otp.join('');
-    if (code.length !== OTP_LENGTH) {
+    if (otp.length !== OTP_LENGTH) {
       setError('Please enter all 6 digits');
       return;
     }
@@ -86,7 +42,7 @@ function VerifyContent() {
       const res = await fetch('/api/auth/verify-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: code }),
+        body: JSON.stringify({ email, otp }),
       });
 
       const data = await res.json();
@@ -94,8 +50,7 @@ function VerifyContent() {
       if (!res.ok) {
         setError(data.error || 'Invalid OTP');
         if (data.error?.includes('expired')) {
-          setOtp(Array(OTP_LENGTH).fill(''));
-          focusInput(0);
+          setOtp('');
         }
         return;
       }
@@ -128,8 +83,7 @@ function VerifyContent() {
       }
 
       setCountdown(RESEND_COUNTDOWN);
-      setOtp(Array(OTP_LENGTH).fill(''));
-      focusInput(0);
+      setOtp('');
     } catch {
       setError('Network error. Please try again.');
     } finally {
@@ -186,35 +140,29 @@ function VerifyContent() {
         <p className="font-bold font-['DM_Sans'] text-[#1c1b1b] mt-1">{email}</p>
       </div>
 
-      {/* Error */}
-      {error && (
+      {/* Error block for verification flow errors */}
+      {error && !error.includes('expired') && (
         <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-[#ba1a1a] rounded-lg flex items-center gap-2">
           <span className="material-symbols-outlined text-[#ba1a1a] text-[20px]">error</span>
           <p className="text-sm text-[#ba1a1a] font-['DM_Sans']">{error}</p>
         </div>
       )}
 
-      {/* OTP Input */}
+      {/* OTP Input component usage */}
       <form onSubmit={handleSubmit}>
-        <div className="flex justify-center gap-3 mb-6">
-          {otp.map((digit, i) => (
-            <input
-              key={i}
-              ref={(el) => { inputRefs.current[i] = el; }}
-              type="text"
-              inputMode="numeric"
-              maxLength={1}
-              value={digit}
-              onChange={(e) => handleChange(i, e.target.value)}
-              onKeyDown={(e) => handleKeyDown(i, e)}
-              onPaste={i === 0 ? handlePaste : undefined}
-              className="otp-digit"
-              aria-label={`Digit ${i + 1}`}
-            />
-          ))}
+        <div className="mb-6">
+          <OtpInput
+            length={OTP_LENGTH}
+            value={otp}
+            onChange={(val) => {
+              setOtp(val);
+              setError('');
+            }}
+            error={error}
+          />
         </div>
 
-        {/* Resend */}
+        {/* Resend countdown */}
         <div className="text-center mb-6">
           {countdown > 0 ? (
             <p className="text-sm text-[#5d5c74] font-['DM_Sans']">
@@ -235,7 +183,7 @@ function VerifyContent() {
           )}
         </div>
 
-        {/* Submit */}
+        {/* Submit Button */}
         <Button
           type="submit"
           fullWidth
