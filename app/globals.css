@@ -1,26 +1,161 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ═══════════════════════════════════════════════════════════════════════════
+   SplitKaro Design Tokens — Tailwind CSS v4
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+@theme {
+  /* ── Colors ──────────────────────────────────────────────────────────── */
+  --color-primary: #aa3000;
+  --color-primary-light: #c45a2d;
+  --color-primary-container: #ffdbd0;
+  --color-on-primary: #ffffff;
+
+  --color-secondary: #5d5c74;
+  --color-secondary-container: #e3e1f9;
+  --color-on-secondary: #ffffff;
+
+  --color-surface: #fcf9f8;
+  --color-surface-dim: #ddd9d8;
+  --color-surface-container: #f1edec;
+  --color-surface-container-low: #f7f3f2;
+  --color-surface-container-high: #ebe7e6;
+
+  --color-on-surface: #1c1b1b;
+  --color-on-surface-variant: #4f4948;
+  --color-outline: #817a79;
+  --color-outline-variant: #d3c7c5;
+
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+
+  --color-success: #1b6d30;
+  --color-success-container: #a4f6a8;
+
+  --color-warning: #7d5800;
+  --color-warning-container: #ffdea6;
+
+  /* ── Typography ──────────────────────────────────────────────────────── */
+  --font-display: "Syne", sans-serif;
+  --font-heading: "Space Grotesk", sans-serif;
+  --font-body: "DM Sans", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+
+  /* ── Shadows ─────────────────────────────────────────────────────────── */
+  --shadow-brutalist: 2px 2px 0px var(--color-on-surface);
+  --shadow-brutalist-sm: 1px 1px 0px var(--color-on-surface);
+  --shadow-brutalist-lg: 4px 4px 0px var(--color-on-surface);
+  --shadow-brutalist-primary: 2px 2px 0px var(--color-primary);
+
+  /* ── Border Radius ───────────────────────────────────────────────────── */
+  --radius-DEFAULT: 1rem;
+  --radius-lg: 2rem;
+  --radius-full: 9999px;
+
+  /* ── Spacing ─────────────────────────────────────────────────────────── */
+  --spacing-safe-bottom: env(safe-area-inset-bottom, 0px);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* ═══════════════════════════════════════════════════════════════════════════
+   Base Styles
+   ═══════════════════════════════════════════════════════════════════════════ */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Brutalist Utility Classes
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.brutalist-shadow {
+  border: 2px solid var(--color-on-surface);
+  box-shadow: 2px 2px 0px var(--color-on-surface);
+}
+
+.brutalist-shadow-hover {
+  border: 2px solid var(--color-on-surface);
+  box-shadow: 2px 2px 0px var(--color-on-surface);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+
+.brutalist-shadow-hover:hover {
+  box-shadow: 3px 3px 0px var(--color-on-surface);
+  transform: translate(-1px, -1px);
+}
+
+.brutalist-shadow-active,
+.brutalist-shadow-hover:active {
+  box-shadow: 0px 0px 0px var(--color-on-surface);
+  transform: translate(2px, 2px);
+}
+
+.brutalist-input {
+  border: 2px solid var(--color-on-surface);
+  border-radius: var(--radius-DEFAULT);
+  padding: 0.75rem 1rem;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  background: var(--color-surface);
+  color: var(--color-on-surface);
+  outline: none;
+  width: 100%;
+  transition: box-shadow 0.15s ease;
+}
+
+.brutalist-input:focus {
+  box-shadow: 2px 2px 0px var(--color-primary);
+  border-color: var(--color-primary);
+}
+
+.brutalist-input::placeholder {
+  color: var(--color-outline);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Patterns & Utilities
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.grid-pattern {
+  background-image: linear-gradient(
+      var(--color-outline-variant) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      to right,
+      var(--color-outline-variant) 1px,
+      transparent 1px
+    );
+  background-size: 24px 24px;
+}
+
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Material Symbols Overrides
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 400,
+    "GRAD" 0,
+    "opsz" 24;
 }
