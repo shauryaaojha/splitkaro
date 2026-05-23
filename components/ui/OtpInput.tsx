@@ -102,7 +102,7 @@ export default function OtpInput({
                 "w-[48px] h-[56px] text-center font-['Space_Grotesk'] text-2xl font-semibold",
                 'border-2 rounded-lg outline-none',
                 'transition-all duration-150',
-                'focus:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] focus:-translate-x-[1px] focus:-translate-y-[1px]',
+                'focus:shadow-[4px_4px_0px_0px_rgba(26,26,26,1)] focus:-translate-x-[1px] focus:-translate-y-[1px] focus:border-[#ff5e00] focus:bg-[#fff5f0]',
                 'shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
                 error
                   ? 'border-[#ba1a1a] bg-[#ffdad6]'
