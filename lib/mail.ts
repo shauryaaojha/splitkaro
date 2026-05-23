@@ -72,7 +72,7 @@ export async function sendOTPEmail(
     await transporter.sendMail({
       from: emailFrom,
       to: email,
-      subject: `${otp} is your SplitKaro verification code`,
+      subject: `SplitKaro verification code`,
       html,
     });
     console.log(`[SMTP] Verification email sent successfully to ${email}`);
