@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import OtpInput from '@/components/ui/OtpInput';
+import { useAuth } from '@/hooks/useAuth';
 
 const OTP_LENGTH = 6;
 const RESEND_COUNTDOWN = 60;
@@ -14,6 +15,8 @@ function VerifyContent() {
   const searchParams = useSearchParams();
   const email = searchParams.get('email') ?? '';
   const redirectTo = searchParams.get('redirect') ?? '/';
+
+  const { mutate } = useAuth();
 
   const [otp, setOtp] = useState<string>('');
   const [error, setError] = useState('');
@@ -54,6 +57,9 @@ function VerifyContent() {
         }
         return;
       }
+
+      // Mutate the auth state so SWR knows the user is logged in
+      await mutate();
 
       router.push(redirectTo.startsWith('/') ? redirectTo : '/');
     } catch {
