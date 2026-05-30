@@ -11,6 +11,9 @@ export const mongoUri = env("MONGODB_URI");
 
 /** JWT signing secret */
 export const jwtSecret = env("JWT_SECRET");
+if (jwtSecret.length < 32) {
+  throw new Error("JWT_SECRET must be at least 32 characters long");
+}
 
 /** JWT token lifetime (default 7d) */
 export const jwtExpiresIn = env("JWT_EXPIRES_IN", "7d");

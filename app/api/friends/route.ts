@@ -33,10 +33,11 @@ export async function GET(request: NextRequest) {
       { data: user.friends, message: 'Friends retrieved successfully' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get friends error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -86,7 +87,7 @@ export async function POST(request: NextRequest) {
 
     // Check if already friends
     const isAlreadyFriend = currentUser.friends.some(
-      (friendId: any) => friendId.toString() === targetUser._id.toString()
+      (friendId: { toString(): string }) => friendId.toString() === targetUser._id.toString()
     );
     if (isAlreadyFriend) {
       return NextResponse.json(
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
 
     // Check for pending friend request sent from us
     const hasPendingRequest = targetUser.friendRequests?.some(
-      (req: any) =>
+      (req: { from: { toString(): string }; status: string }) =>
         req.from.toString() === currentUser._id.toString() && req.status === 'pending'
     );
     if (hasPendingRequest) {
@@ -109,7 +110,7 @@ export async function POST(request: NextRequest) {
 
     // Check if target already sent a request to us
     const hasIncomingRequest = currentUser.friendRequests?.some(
-      (req: any) =>
+      (req: { from: { toString(): string }; status: string }) =>
         req.from.toString() === targetUser._id.toString() && req.status === 'pending'
     );
     if (hasIncomingRequest) {
@@ -142,10 +143,11 @@ export async function POST(request: NextRequest) {
       { data: null, message: 'Friend request sent successfully!' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Add friend error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }

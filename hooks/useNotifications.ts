@@ -1,7 +1,7 @@
 'use client';
 
 import useSWR from 'swr';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 interface Notification {
   _id: string;
@@ -33,7 +33,7 @@ export function useNotifications() {
     }
   );
 
-  const notifications = data ?? [];
+  const notifications = useMemo(() => data ?? [], [data]);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
   const markAllRead = useCallback(async () => {

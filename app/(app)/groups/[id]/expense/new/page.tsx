@@ -9,6 +9,18 @@ import TopBar from '@/components/layout/TopBar';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
 import Skeleton from '@/components/ui/Skeleton';
 
+type ExpenseFormMember = {
+  userId: {
+    _id: string;
+    name: string;
+    email: string;
+    upiId?: string;
+    avatarUrl?: string;
+  };
+  role: 'admin' | 'member';
+  joinedAt: string | Date;
+};
+
 export default function AddExpensePage() {
   const { id: groupId } = useParams() as { id: string };
   const router = useRouter();
@@ -17,6 +29,34 @@ export default function AddExpensePage() {
   const { group, isLoading: loadingGroup, error: groupError } = useGroup(groupId);
   const { mutate: mutateExpenses } = useExpenses(groupId);
   const [error, setError] = useState<string | null>(null);
+
+  const expenseFormMembers: ExpenseFormMember[] = (group?.members || []).map((member) => {
+    if (typeof member.userId === 'string') {
+      return {
+        userId: {
+          _id: member.userId,
+          name: member.name || 'Member',
+          email: member.email || '',
+          upiId: member.upiId,
+          avatarUrl: member.avatarUrl,
+        },
+        role: member.role,
+        joinedAt: member.joinedAt,
+      };
+    }
+
+    return {
+      userId: {
+        _id: member.userId._id,
+        name: member.userId.name || member.name || 'Member',
+        email: member.userId.email || member.email || '',
+        upiId: member.userId.upiId || member.upiId,
+        avatarUrl: member.userId.avatarUrl || member.avatarUrl,
+      },
+      role: member.role,
+      joinedAt: member.joinedAt,
+    };
+  });
 
   const handleSubmit = async (data: {
     description: string;
@@ -44,8 +84,9 @@ export default function AddExpensePage() {
       // Mutate cache and redirect
       await mutateExpenses();
       router.replace(`/groups/${groupId}`);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
       throw err;
     }
   };
@@ -84,7 +125,7 @@ export default function AddExpensePage() {
       ) : (
         <ExpenseForm
           groupId={groupId}
-          members={group.members as any}
+          members={expenseFormMembers}
           onSubmit={handleSubmit}
         />
       )}

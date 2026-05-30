@@ -19,6 +19,11 @@ interface Friend {
   avatarUrl?: string;
 }
 
+interface FriendRequest {
+  from: Friend | string;
+  status: 'pending' | 'accepted' | 'declined';
+}
+
 const friendsFetcher = async (url: string): Promise<Friend[]> => {
   const res = await fetch(url);
   if (!res.ok) {
@@ -62,8 +67,9 @@ export default function FriendsPage() {
 
       toast.success(json.message || 'Friend request sent!');
       setEmailInput('');
-    } catch (err: any) {
-      setInviteError(err.message || 'Failed to send invite');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to send invite';
+      setInviteError(message);
     } finally {
       setInviting(false);
     }
@@ -87,8 +93,9 @@ export default function FriendsPage() {
       // Mutate local state
       await mutateAuth();
       await mutateFriends();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to respond');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to respond';
+      toast.error(message);
     }
   };
 
@@ -146,9 +153,9 @@ export default function FriendsPage() {
             Pending Friend Requests ({pendingRequests.length})
           </span>
           <Card className="flex flex-col gap-4 bg-white border-2 border-[#1c1b1b]">
-            {pendingRequests.map((req: any) => {
+            {(pendingRequests as FriendRequest[]).map((req) => {
               const requester = req.from;
-              if (!requester) return null;
+              if (!requester || typeof requester === 'string') return null;
               return (
                 <div
                   key={requester._id}

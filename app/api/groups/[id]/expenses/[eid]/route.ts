@@ -5,15 +5,17 @@ import { authMiddleware } from "@/lib/middleware";
 import Expense from "@/models/Expense";
 import Group from "@/models/Group";
 
+const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid user ID");
+
 const expenseEditSchema = z.object({
   description: z.string().min(1),
   amount: z.number().positive(),
   category: z.string().default("other"),
-  paidBy: z.string(),
+  paidBy: objectIdSchema,
   date: z.string().optional(),
   splits: z.array(
     z.object({
-      userId: z.string(),
+      userId: objectIdSchema,
       share: z.number().nonnegative(),
       splitType: z.enum(["equal", "exact", "percentage"]),
     })
@@ -46,8 +48,9 @@ export async function GET(
     }
 
     return NextResponse.json({ data: expense });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch expense" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to fetch expense";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -94,6 +97,21 @@ export async function PUT(
     const body = await request.json();
     const validated = expenseEditSchema.parse(body);
 
+    const memberIds = new Set(group.members.map(m => m.userId.toString()));
+    if (!memberIds.has(validated.paidBy)) {
+      return NextResponse.json({ error: "Paid-by user must be a group member" }, { status: 400 });
+    }
+
+    const hasNonMemberSplit = validated.splits.some(split => !memberIds.has(split.userId));
+    if (hasNonMemberSplit) {
+      return NextResponse.json({ error: "All split participants must be group members" }, { status: 400 });
+    }
+
+    const splitUserIds = new Set(validated.splits.map(split => split.userId));
+    if (splitUserIds.size !== validated.splits.length) {
+      return NextResponse.json({ error: "Each group member can appear only once in splits" }, { status: 400 });
+    }
+
     // Sum validation
     const splitsSum = validated.splits.reduce((acc, split) => acc + split.share, 0);
     const difference = Math.abs(splitsSum - validated.amount);
@@ -108,16 +126,17 @@ export async function PUT(
     if (validated.date) {
       expense.date = new Date(validated.date);
     }
-    expense.splits = validated.splits as any;
+    expense.splits = validated.splits;
 
     await expense.save();
 
     return NextResponse.json({ data: expense, message: "Expense updated successfully" });
-  } catch (err: any) {
+  } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.errors[0]?.message || "Validation failed" }, { status: 400 });
     }
-    return NextResponse.json({ error: err.message || "Failed to update expense" }, { status: 500 });
+    const message = err instanceof Error ? err.message : "Failed to update expense";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
 
@@ -157,7 +176,8 @@ export async function DELETE(
     await expense.save();
 
     return NextResponse.json({ message: "Expense deleted successfully" });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to delete expense" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to delete expense";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

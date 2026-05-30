@@ -210,14 +210,18 @@ export default function GroupDetailPage() {
                   No expenses recorded
                 </span>
                 <span className="text-xs text-[#5d5c74]/70 mt-1 max-w-[200px]">
-                  Click the plus icon below to record the group's first shared expense!
+                  Click the plus icon below to record the group&apos;s first shared expense!
                 </span>
               </div>
             ) : (
               <div className="flex flex-col gap-3">
                 {expenses.map((expense) => {
+                  const paidBy =
+                    typeof expense.paidBy === 'string'
+                      ? { _id: expense.paidBy, name: expense.paidByName || 'Unknown' }
+                      : expense.paidBy;
                   const creatorSplit = expense.splits.find(s => s.userId === myMemberId);
-                  const isPaidByMe = (expense.paidBy as any)._id === myMemberId;
+                  const isPaidByMe = paidBy._id === myMemberId;
                   
                   return (
                     <ExpenseItem
@@ -228,7 +232,7 @@ export default function GroupDetailPage() {
                         amount: expense.amount,
                         category: expense.category,
                         categoryEmoji: categoryEmojis[expense.category] || '📦',
-                        paidBy: isPaidByMe ? 'You' : (expense.paidBy as any).name || 'Unknown',
+                        paidBy: isPaidByMe ? 'You' : paidBy.name || 'Unknown',
                         date: expense.date,
                         myShare: creatorSplit ? creatorSplit.share : undefined,
                       }}
@@ -301,7 +305,7 @@ export default function GroupDetailPage() {
                         </span>
                         
                         {/* Custom Settle action button */}
-                        {(isOwedByMe || isOwedToMe) && (
+                        {isOwedByMe && (
                           <button
                             type="button"
                             onClick={() => {
@@ -313,6 +317,11 @@ export default function GroupDetailPage() {
                           >
                             Settle Up
                           </button>
+                        )}
+                        {isOwedToMe && (
+                          <span className="bg-[#E8F8EE] border border-[#1c1b1b] rounded-full px-3 py-1 font-bold text-[10px] uppercase font-['Space_Grotesk']">
+                            Awaiting payment
+                          </span>
                         )}
                       </div>
                     </Card>

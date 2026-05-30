@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import useSWR from 'swr';
 import TopBar from '@/components/layout/TopBar';
@@ -39,7 +39,6 @@ const expensesFetcher = async (url: string) => {
 
 export default function GroupExpensesPage() {
   const { id: groupId } = useParams() as { id: string };
-  const router = useRouter();
   const toast = useToast();
   const { user } = useAuth();
   const [filterCategory, setFilterCategory] = useState<string>('all');
@@ -63,7 +62,7 @@ export default function GroupExpensesPage() {
   const categories = Array.from(new Set(expenses.map(e => e.category)));
 
   // Filter expenses
-  let filtered = expenses.filter(e => {
+  const filtered = expenses.filter(e => {
     if (filterCategory !== 'all' && e.category !== filterCategory) return false;
     if (filterPaidBy !== 'all' && e.paidBy._id !== filterPaidBy) return false;
     return true;
@@ -85,8 +84,9 @@ export default function GroupExpensesPage() {
       
       toast.success('Expense deleted');
       mutate();
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to delete expense');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to delete expense';
+      toast.error(message);
     }
   };
 

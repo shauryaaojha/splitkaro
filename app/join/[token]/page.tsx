@@ -59,8 +59,9 @@ export default function JoinGroupPage() {
 
       toast.success('Joined group successfully!');
       router.replace(`/groups/${json.data._id}`);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to join group');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to join group';
+      toast.error(message);
     } finally {
       setJoining(false);
     }
@@ -109,10 +110,10 @@ export default function JoinGroupPage() {
 
           <div className="flex flex-col">
             <span className="text-[10px] font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5d5c74] mb-1">
-              You've Been Invited
+              You&apos;ve Been Invited
             </span>
             <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
-              Join "{preview.name}"
+              Join &quot;{preview.name}&quot;
             </h2>
             <p className="text-xs text-[#5d5c74] font-semibold mt-1">
               Created by {preview.creatorName} · {preview.memberCount} members

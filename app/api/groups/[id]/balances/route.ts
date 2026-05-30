@@ -50,7 +50,8 @@ export async function GET(
     });
 
     return NextResponse.json({ data: balanceMatrix });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch balances" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to fetch balances";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

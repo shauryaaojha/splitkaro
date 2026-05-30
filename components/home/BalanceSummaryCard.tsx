@@ -15,7 +15,6 @@ export default function BalanceSummaryCard({
   netBalance,
 }: BalanceSummaryCardProps) {
   const isCreditor = netBalance > 0;
-  const isDebtor = netBalance < 0;
   const absNet = Math.abs(netBalance);
 
   return (
@@ -67,7 +66,7 @@ export default function BalanceSummaryCard({
           </div>
           <div className="flex flex-col border-l border-white/10 pl-4">
             <span className="text-[10px] font-bold uppercase tracking-wider font-['Space_Grotesk'] text-white/50">
-              You're owed
+              You&apos;re owed
             </span>
             <span className="text-lg font-['Syne'] font-bold text-[#a4f6a8] mt-0.5">
               ₹{totalOwed.toFixed(2)}

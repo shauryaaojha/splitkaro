@@ -48,8 +48,9 @@ export default function NewGroupPage() {
 
       const createdGroup = json.data;
       router.push(`/groups/${createdGroup._id}/invite`);
-    } catch (err: any) {
-      setError(err.message || 'Something went wrong');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Something went wrong';
+      setError(message);
     } finally {
       setLoading(false);
     }

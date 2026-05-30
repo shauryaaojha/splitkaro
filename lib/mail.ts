@@ -75,11 +75,9 @@ export async function sendOTPEmail(
       subject: `SplitKaro verification code`,
       html,
     });
-    console.log(`[SMTP] Verification email sent successfully to ${email}`);
+    console.info(`[SMTP] Verification email sent successfully to ${email}`);
   } catch (err) {
-    console.log("\n==================================================");
-    console.log(`[SMTP Offline] E-mail to: ${email}`);
-    console.log(`[SMTP Offline] Hey ${name}, your verification code is: ${otp}`);
-    console.log("==================================================\n");
+    console.error("[SMTP] Failed to send verification email", err);
+    throw new Error("Failed to send verification email");
   }
 }

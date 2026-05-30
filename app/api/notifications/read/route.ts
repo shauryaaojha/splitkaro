@@ -16,7 +16,8 @@ export async function PUT(request: NextRequest) {
     );
 
     return NextResponse.json({ message: "All notifications marked as read" });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to update notifications" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to update notifications";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

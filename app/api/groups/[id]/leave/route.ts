@@ -3,6 +3,7 @@ import { connectDB } from '@/lib/db';
 import { authMiddleware } from '@/lib/middleware';
 import Group from '@/models/Group';
 import { calculateGroupBalances } from '@/lib/balance';
+import type { IGroupMember } from '@/types';
 
 export async function DELETE(
   request: NextRequest,
@@ -26,7 +27,7 @@ export async function DELETE(
 
     // Verify member existence in nested subdocument
     const memberRecord = group.members.find(
-      (m: any) => m.userId.toString() === auth._id.toString()
+      (m: IGroupMember) => m.userId.toString() === auth._id.toString()
     );
     if (!memberRecord) {
       return NextResponse.json(
@@ -48,7 +49,7 @@ export async function DELETE(
 
     // Check if user is the only admin in the group
     const isAdmin = memberRecord.role === 'admin';
-    const adminCount = group.members.filter((m: any) => m.role === 'admin').length;
+    const adminCount = group.members.filter((m: IGroupMember) => m.role === 'admin').length;
 
     if (isAdmin && adminCount === 1 && group.members.length > 1) {
       return NextResponse.json(
@@ -59,8 +60,8 @@ export async function DELETE(
 
     // Remove user record from group members array
     group.members = group.members.filter(
-      (m: any) => m.userId.toString() !== auth._id.toString()
-    ) as any;
+      (m: IGroupMember) => m.userId.toString() !== auth._id.toString()
+    );
 
     await group.save();
 
@@ -68,10 +69,11 @@ export async function DELETE(
       { data: null, message: 'Left group successfully' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Leave group error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }

@@ -54,5 +54,5 @@ export function buildPaytmUrl(params: UpiParams): string {
     tn: params.tn,
     cu: "INR",
   });
-  return `paytmmp://pay?${qs.toString()}`;
+  return `paytmmp://upi/pay?${qs.toString()}`;
 }

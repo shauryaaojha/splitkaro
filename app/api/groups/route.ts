@@ -5,7 +5,22 @@ import { connectDB } from '@/lib/db';
 import { authMiddleware } from '@/lib/middleware';
 import Group from '@/models/Group';
 import { calculateGroupBalances } from '@/lib/balance';
-import User from '@/models/User';
+
+interface PopulatedGroupMember {
+  userId?: {
+    name?: string;
+    avatarUrl?: string;
+  };
+}
+
+interface GroupListItem {
+  _id: { toString(): string };
+  name: string;
+  category: string;
+  emoji: string;
+  inviteToken: string;
+  members: PopulatedGroupMember[];
+}
 
 const createGroupSchema = z.object({
   name: z.string().min(1, 'Group name is required').max(50, 'Group name too long'),
@@ -32,23 +47,24 @@ export async function GET(request: NextRequest) {
 
     // Map groups and inject balances and formatted member details
     const groupsWithMeta = await Promise.all(
-      groups.map(async (group: any) => {
+      groups.map(async (group) => {
+        const populatedGroup = group as unknown as GroupListItem;
         // Calculate group balances
-        const balances = await calculateGroupBalances(group._id.toString());
+        const balances = await calculateGroupBalances(populatedGroup._id.toString());
         const userBalance = balances.get(auth._id.toString()) ?? 0;
 
         // Map populated members to matches required for GroupCard Props: { name, avatarUrl }
-        const mappedMembers = group.members.map((m: any) => ({
+        const mappedMembers = populatedGroup.members.map((m) => ({
           name: m.userId?.name || 'Unknown',
           avatarUrl: m.userId?.avatarUrl,
         }));
 
         return {
-          id: group._id.toString(),
-          name: group.name,
-          category: group.category,
-          emoji: group.emoji,
-          inviteToken: group.inviteToken,
+          id: populatedGroup._id.toString(),
+          name: populatedGroup.name,
+          category: populatedGroup.category,
+          emoji: populatedGroup.emoji,
+          inviteToken: populatedGroup.inviteToken,
           members: mappedMembers,
           balance: userBalance,
         };
@@ -59,10 +75,11 @@ export async function GET(request: NextRequest) {
       { data: groupsWithMeta, message: 'Groups retrieved successfully' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get groups error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -112,10 +129,11 @@ export async function POST(request: NextRequest) {
       { data: populated, message: 'Group created successfully' },
       { status: 201 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Create group error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }

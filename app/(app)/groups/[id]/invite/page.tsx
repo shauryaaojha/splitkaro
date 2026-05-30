@@ -13,6 +13,26 @@ export default function GroupInvitePage() {
   const { id } = useParams() as { id: string };
   const { group, isLoading, error } = useGroup(id);
 
+  const members = (group?.members || []).map((member) => {
+    if (typeof member.userId === 'string') {
+      return {
+        _id: member.userId,
+        name: member.name || 'Member',
+        email: member.email || '',
+        avatarUrl: member.avatarUrl,
+        role: member.role,
+      };
+    }
+
+    return {
+      _id: member.userId._id,
+      name: member.userId.name || member.name || 'Member',
+      email: member.userId.email || member.email || '',
+      avatarUrl: member.userId.avatarUrl || member.avatarUrl,
+      role: member.role,
+    };
+  });
+
   return (
     <div className="flex flex-col gap-6 pt-16">
       {/* TopBar with back navigation */}
@@ -48,23 +68,23 @@ export default function GroupInvitePage() {
           {/* List of current group members */}
           <div className="flex flex-col gap-3">
             <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037] px-1">
-              Joined Members ({group.members.length})
+              Joined Members ({members.length})
             </span>
             <Card className="flex flex-col gap-4">
-              {group.members.map((member) => (
+              {members.map((member) => (
                 <div
-                  key={member.userId}
+                  key={member._id}
                   className="flex items-center justify-between pb-3 border-b border-[#eae7e7] last:border-b-0 last:pb-0"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar
-                      name={member.name || 'Member'}
+                      name={member.name}
                       src={member.avatarUrl}
                       size="sm"
                     />
                     <div className="flex flex-col">
                       <span className="font-bold text-sm text-[#1c1b1b]">
-                        {member.name || 'Unknown'}
+                        {member.name}
                       </span>
                       <span className="text-xs text-[#5d5c74] font-semibold">
                         {member.email || ''}

@@ -28,7 +28,8 @@ export async function GET(
       .lean();
 
     return NextResponse.json({ data: settlements });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch settlements" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to fetch settlements";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

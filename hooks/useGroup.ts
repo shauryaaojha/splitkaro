@@ -3,7 +3,13 @@
 import useSWR from 'swr';
 
 interface GroupMember {
-  userId: string;
+  userId: string | {
+    _id: string;
+    name?: string;
+    email?: string;
+    avatarUrl?: string;
+    upiId?: string;
+  };
   role: 'admin' | 'member';
   joinedAt: string;
   name?: string;

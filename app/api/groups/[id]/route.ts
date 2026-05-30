@@ -10,6 +10,21 @@ const updateGroupSchema = z.object({
   emoji: z.string().optional(),
 });
 
+interface PopulatedMember {
+  userId?: string | {
+    toString(): string;
+  } | {
+    _id: { toString(): string };
+  };
+}
+
+function memberUserId(member: PopulatedMember): string {
+  if (!member.userId) return '';
+  if (typeof member.userId === 'string') return member.userId;
+  if ('_id' in member.userId) return member.userId._id.toString();
+  return member.userId.toString();
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -35,7 +50,7 @@ export async function GET(
     }
 
     const isMember = group.members.some(
-      (m: any) => m.userId?._id.toString() === auth._id.toString()
+      (m) => memberUserId(m) === auth._id.toString()
     );
     if (!isMember) {
       return NextResponse.json(
@@ -48,10 +63,11 @@ export async function GET(
       { data: group, message: 'Group retrieved successfully' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Get group error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -103,7 +119,7 @@ export async function PUT(
     const { name, category, emoji } = parsed.data;
 
     if (name) group.name = name;
-    if (category) group.category = category as any;
+    if (category) group.category = category;
     if (emoji) group.emoji = emoji;
 
     await group.save();
@@ -116,10 +132,11 @@ export async function PUT(
       { data: updated, message: 'Group updated successfully' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Update group error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -165,10 +182,11 @@ export async function DELETE(
       { data: null, message: 'Group archived successfully' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Archive group error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }

@@ -15,7 +15,13 @@ interface Expense {
   description: string;
   amount: number;
   category: string;
-  paidBy: string;
+  paidBy: string | {
+    _id: string;
+    name?: string;
+    email?: string;
+    upiId?: string;
+    avatarUrl?: string;
+  };
   paidByName?: string;
   date: string;
   splits: ExpenseSplit[];

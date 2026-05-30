@@ -1,27 +1,39 @@
 import { NextRequest, NextResponse } from "next/server";
 import QRCode from "qrcode";
+import { z } from "zod";
 import { buildUpiUrl } from "@/lib/upi";
+
+const upiQrSchema = z.object({
+  pa: z.string().regex(/^[\w.-]+@[\w.-]+$/, "Invalid UPI ID"),
+  pn: z.string().min(1).max(80),
+  am: z.coerce.number().positive().max(100000),
+  tn: z.string().max(120).optional().default("SplitKaro Payment"),
+});
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const pa = searchParams.get("pa");
-  const pn = searchParams.get("pn");
-  const am = searchParams.get("am");
-  const tn = searchParams.get("tn");
+  const parsed = upiQrSchema.safeParse({
+    pa: searchParams.get("pa"),
+    pn: searchParams.get("pn"),
+    am: searchParams.get("am"),
+    tn: searchParams.get("tn") || undefined,
+  });
 
-  if (!pa || !pn) {
-    return NextResponse.json({ error: "Missing required query parameters: pa (UPI ID) and pn (Payee Name)" }, { status: 400 });
+  if (!parsed.success) {
+    return NextResponse.json(
+      { error: parsed.error.errors[0]?.message || "Invalid UPI QR parameters" },
+      { status: 400 }
+    );
   }
 
   try {
     const upiUrl = buildUpiUrl({
-      pa,
-      pn,
-      am: am || "",
-      tn: tn || "SplitKaro Payment",
+      pa: parsed.data.pa,
+      pn: parsed.data.pn,
+      am: parsed.data.am.toFixed(2),
+      tn: parsed.data.tn,
     });
 
-    // Generate Base64 Data URL for the QR code
     const qrDataUrl = await QRCode.toDataURL(upiUrl, {
       margin: 2,
       width: 300,
@@ -37,7 +49,8 @@ export async function GET(request: NextRequest) {
         upiUrl,
       },
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to generate UPI QR code" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to generate UPI QR code";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

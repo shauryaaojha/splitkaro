@@ -40,7 +40,7 @@ export async function POST(request: NextRequest) {
     // Find the friend request inside the current user's requests array
     // Wait, the request contains requestId which refers to the 'from' user's ID
     const requestIndex = currentUser.friendRequests?.findIndex(
-      (req: any) => req.from.toString() === requestId && req.status === 'pending'
+      (req: { from: { toString(): string }; status: string }) => req.from.toString() === requestId && req.status === 'pending'
     );
 
     if (requestIndex === undefined || requestIndex === -1) {
@@ -67,10 +67,10 @@ export async function POST(request: NextRequest) {
       const fromId = fromUser._id.toString();
 
       const alreadyFriendsCurrentUser = currentUser.friends.some(
-        (id: any) => id.toString() === fromId
+        (id: { toString(): string }) => id.toString() === fromId
       );
       const alreadyFriendsFromUser = fromUser.friends.some(
-        (id: any) => id.toString() === currentId
+        (id: { toString(): string }) => id.toString() === currentId
       );
 
       if (!alreadyFriendsCurrentUser) {
@@ -107,10 +107,11 @@ export async function POST(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Respond friend request error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }

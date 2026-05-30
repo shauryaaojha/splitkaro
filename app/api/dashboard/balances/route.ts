@@ -86,7 +86,8 @@ export async function GET(request: NextRequest) {
         balances: balancesList,
       },
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to calculate dashboard balances" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to calculate dashboard balances";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

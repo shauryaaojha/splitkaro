@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
 import Card from '@/components/ui/Card';
@@ -47,11 +47,24 @@ const CATEGORIES = [
 ];
 
 export default function ExpenseForm({
-  groupId,
   members,
   onSubmit,
   initialData,
 }: ExpenseFormProps) {
+  const initialSplitState = useMemo(() => {
+    const initialIncluded: Record<string, boolean> = {};
+    const initialCustom: Record<string, string> = {};
+
+    members.forEach((member) => {
+      const mId = member.userId._id;
+      const foundSplit = initialData?.splits?.find((s) => s.userId === mId);
+      initialIncluded[mId] = foundSplit ? foundSplit.share > 0 : true;
+      initialCustom[mId] = foundSplit ? foundSplit.share.toString() : '';
+    });
+
+    return { included: initialIncluded, custom: initialCustom };
+  }, [members, initialData]);
+
   const [description, setDescription] = useState(initialData?.description || '');
   const [amount, setAmount] = useState<string>(initialData?.amount?.toString() || '');
   const [category, setCategory] = useState(initialData?.category || 'other');
@@ -65,35 +78,14 @@ export default function ExpenseForm({
     (initialData?.splits[0]?.splitType as SplitType) || 'equal'
   );
 
-  // Tracks which members are included (only used for 'equal' split type)
-  const [includedMembers, setIncludedMembers] = useState<Record<string, boolean>>({});
-  // Tracks custom inputs for 'exact' (rupees) and 'percentage' (%) split types
-  const [customSplits, setCustomSplits] = useState<Record<string, string>>({});
+  const [includedMembers, setIncludedMembers] = useState<Record<string, boolean>>(
+    () => initialSplitState.included
+  );
+  const [customSplits, setCustomSplits] = useState<Record<string, string>>(
+    () => initialSplitState.custom
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-
-  // Initialize included members and custom splits
-  useEffect(() => {
-    const initialIncluded: Record<string, boolean> = {};
-    const initialCustom: Record<string, string> = {};
-
-    members.forEach((member) => {
-      const mId = member.userId._id;
-      
-      // If editing an existing expense, populate from its splits
-      if (initialData?.splits) {
-        const foundSplit = initialData.splits.find((s) => s.userId === mId);
-        initialIncluded[mId] = foundSplit ? foundSplit.share > 0 : true;
-        initialCustom[mId] = foundSplit ? foundSplit.share.toString() : '';
-      } else {
-        initialIncluded[mId] = true;
-        initialCustom[mId] = '';
-      }
-    });
-
-    setIncludedMembers(initialIncluded);
-    setCustomSplits(initialCustom);
-  }, [members, initialData]);
 
   // Handle amount or split type changes to automatically distribute values
   const numericAmount = parseFloat(amount) || 0;
@@ -191,8 +183,9 @@ export default function ExpenseForm({
         date,
         splits: finalSplits,
       });
-    } catch (err: any) {
-      setErrors((prev) => ({ ...prev, api: err.message || 'Failed to submit expense' }));
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to submit expense';
+      setErrors((prev) => ({ ...prev, api: message }));
     } finally {
       setLoading(false);
     }

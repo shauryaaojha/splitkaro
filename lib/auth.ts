@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import type { SignOptions } from "jsonwebtoken";
 import { NextRequest, NextResponse } from "next/server";
 import { jwtSecret, jwtExpiresIn } from "./config";
 import { connectDB } from "./db";
@@ -17,7 +18,7 @@ interface JwtPayload {
  */
 export function signJWT(userId: string): string {
   return jwt.sign({ userId } satisfies JwtPayload, jwtSecret, {
-    expiresIn: jwtExpiresIn as any,
+    expiresIn: jwtExpiresIn as SignOptions["expiresIn"],
   });
 }
 

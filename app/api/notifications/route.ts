@@ -23,7 +23,8 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({
       data: notifications,
     });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to fetch notifications" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to fetch notifications";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

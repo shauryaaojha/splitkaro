@@ -38,8 +38,9 @@ export default function UpiQRCode({
 
         const json = await res.json();
         setQrDataUrl(json.data.qrDataUrl);
-      } catch (err: any) {
-        setError(err.message || 'Failed to generate QR code');
+      } catch (err) {
+        const message = err instanceof Error ? err.message : 'Failed to generate QR code';
+        setError(message);
       } finally {
         setLoading(false);
       }

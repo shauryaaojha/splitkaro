@@ -3,6 +3,11 @@ import { connectDB } from '@/lib/db';
 import { authMiddleware } from '@/lib/middleware';
 import Group from '@/models/Group';
 import Notification from '@/models/Notification';
+import type { IGroupMember } from '@/types';
+
+interface PopulatedCreator {
+  name?: string;
+}
 
 export async function GET(
   _request: NextRequest,
@@ -38,16 +43,17 @@ export async function GET(
           emoji: group.emoji,
           category: group.category,
           memberCount: group.members.length,
-          creatorName: (group.createdBy as any)?.name || 'Unknown',
+          creatorName: (group.createdBy as PopulatedCreator | undefined)?.name || 'Unknown',
         },
         message: 'Group preview retrieved',
       },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Group preview error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }
@@ -82,7 +88,7 @@ export async function POST(
 
     // Correct membership check for subdocument
     const isMember = group.members.some(
-      (m: any) => m.userId.toString() === auth._id.toString()
+      (m: IGroupMember) => m.userId.toString() === auth._id.toString()
     );
     if (isMember) {
       return NextResponse.json(
@@ -101,10 +107,10 @@ export async function POST(
 
     // Notify all existing members about the new join
     const membersToNotify = group.members.filter(
-      (m: any) => m.userId.toString() !== auth._id.toString()
+      (m: IGroupMember) => m.userId.toString() !== auth._id.toString()
     );
 
-    const notificationPromises = membersToNotify.map((m: any) =>
+    const notificationPromises = membersToNotify.map((m: IGroupMember) =>
       Notification.create({
         userId: m.userId,
         type: 'group_joined',
@@ -126,10 +132,11 @@ export async function POST(
       { data: populated, message: 'Joined group successfully!' },
       { status: 200 }
     );
-  } catch (error: any) {
+  } catch (error) {
     console.error('Join group error:', error);
+    const message = error instanceof Error ? error.message : 'Something went wrong. Please try again.';
     return NextResponse.json(
-      { error: error.message || 'Something went wrong. Please try again.' },
+      { error: message },
       { status: 500 }
     );
   }

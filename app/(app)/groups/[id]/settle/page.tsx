@@ -2,7 +2,6 @@
 
 import React, { useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import useSWR from 'swr';
 import { useGroup } from '@/hooks/useGroup';
 import { useToast } from '@/components/ui/Toast';
 import TopBar from '@/components/layout/TopBar';
@@ -12,6 +11,20 @@ import Button from '@/components/ui/Button';
 import Skeleton from '@/components/ui/Skeleton';
 import UpiQRCode from '@/components/settle/UpiQRCode';
 import UpiDeepLinks from '@/components/settle/UpiDeepLinks';
+
+interface PopulatedMember {
+  userId: string | {
+    _id: string;
+    name?: string;
+    email?: string;
+    avatarUrl?: string;
+    upiId?: string;
+  };
+  name?: string;
+  email?: string;
+  avatarUrl?: string;
+  upiId?: string;
+}
 
 export default function SettleUpPage() {
   const { id: groupId } = useParams() as { id: string };
@@ -28,9 +41,29 @@ export default function SettleUpPage() {
   const [saving, setSaving] = useState(false);
   const [showQR, setShowQR] = useState(false);
 
-  // Find payer and payee details from group members list
-  const payer = group?.members.find((m) => m.userId === payerId);
-  const payee = group?.members.find((m) => m.userId === payeeId);
+  const getMemberDetails = (member: PopulatedMember) => {
+    if (typeof member.userId === 'string') {
+      return {
+        _id: member.userId,
+        name: member.name || 'Member',
+        email: member.email || '',
+        avatarUrl: member.avatarUrl,
+        upiId: member.upiId || '',
+      };
+    }
+
+    return {
+      _id: member.userId._id,
+      name: member.userId.name || member.name || 'Member',
+      email: member.userId.email || member.email || '',
+      avatarUrl: member.userId.avatarUrl || member.avatarUrl,
+      upiId: member.userId.upiId || member.upiId || '',
+    };
+  };
+
+  const members = (group?.members || []) as PopulatedMember[];
+  const payer = members.map(getMemberDetails).find((m) => m._id === payerId);
+  const payee = members.map(getMemberDetails).find((m) => m._id === payeeId);
 
   const handleMarkAsPaid = async () => {
     setSaving(true);
@@ -40,6 +73,7 @@ export default function SettleUpPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           groupId,
+          payerId,
           payeeId,
           amount,
           markedManually: true,
@@ -53,8 +87,9 @@ export default function SettleUpPage() {
 
       toast.success('Settlement recorded successfully!');
       router.replace(`/groups/${groupId}`);
-    } catch (err: any) {
-      toast.error(err.message || 'Failed to settle debt');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to settle debt';
+      toast.error(message);
     } finally {
       setSaving(false);
     }

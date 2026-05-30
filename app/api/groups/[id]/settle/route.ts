@@ -61,7 +61,8 @@ export async function GET(
     });
 
     return NextResponse.json({ data: { transactions: populatedTransactions } });
-  } catch (err: any) {
-    return NextResponse.json({ error: err.message || "Failed to calculate settlements" }, { status: 500 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to calculate settlements";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

@@ -6,6 +6,7 @@ import ActivityItem from '@/components/home/ActivityItem';
 import Skeleton from '@/components/ui/Skeleton';
 import Card from '@/components/ui/Card';
 import { useNotifications } from '@/hooks/useNotifications';
+import type { Notification } from '@/hooks/useNotifications';
 
 export default function ActivityPage() {
   const { notifications, isLoading, error, markAllRead } = useNotifications();
@@ -19,9 +20,9 @@ export default function ActivityPage() {
 
   // Group notifications by date
   const groupNotifications = () => {
-    const today: any[] = [];
-    const yesterday: any[] = [];
-    const older: any[] = [];
+    const today: Notification[] = [];
+    const yesterday: Notification[] = [];
+    const older: Notification[] = [];
 
     const now = new Date();
     const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
@@ -43,7 +44,7 @@ export default function ActivityPage() {
 
   const groups = groupNotifications();
 
-  const renderSection = (title: string, list: any[]) => {
+  const renderSection = (title: string, list: Notification[]) => {
     if (list.length === 0) return null;
     return (
       <div className="flex flex-col gap-3">

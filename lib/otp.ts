@@ -1,13 +1,13 @@
 import bcrypt from "bcryptjs";
+import { randomInt } from "crypto";
 
 const SALT_ROUNDS = 10;
 
 /**
- * Generate a cryptographically-random 6-digit OTP string.
- * Uses Math.random — acceptable for OTPs sent over a side-channel (email).
+ * Generate a cryptographically random 6-digit OTP string.
  */
 export function generateOTP(): string {
-  return Math.floor(100_000 + Math.random() * 900_000).toString();
+  return randomInt(100_000, 1_000_000).toString();
 }
 
 /**
@@ -28,7 +28,7 @@ export async function verifyOTP(
 }
 
 /**
- * Returns `true` if the OTP has expired (i.e. `expiresAt` is in the past).
+ * Returns true if the OTP has expired.
  */
 export function isOTPExpired(expiresAt: Date): boolean {
   return new Date() > new Date(expiresAt);
