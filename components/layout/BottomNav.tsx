@@ -28,7 +28,13 @@ export default function BottomNav() {
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 md:hidden">
-      <div className="max-w-[600px] mx-auto bg-[#5d5c74] border-t-2 border-[#1c1b1b] px-2 py-2">
+      <div
+        className="max-w-[600px] mx-auto px-2 py-2"
+        style={{
+          background: 'var(--t-accent)',
+          borderTop: '2px solid var(--t-border)',
+        }}
+      >
         <ul className="flex items-center justify-around">
           {NAV_ITEMS.map((item) => {
             const active = isActive(pathname, item.href);
@@ -39,10 +45,14 @@ export default function BottomNav() {
                   className={[
                     'flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all duration-150',
                     "text-sm font-medium font-['DM_Sans']",
-                    active
-                      ? 'bg-[#aa3000] text-white shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]'
-                      : 'text-white/80 hover:text-white',
                   ].join(' ')}
+                  style={active ? {
+                    background: 'var(--t-primary)',
+                    color: '#fff',
+                    boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+                  } : {
+                    color: 'rgba(255,255,255,0.75)',
+                  }}
                 >
                   <span className="material-symbols-outlined text-[22px]">
                     {active ? item.iconFilled : item.icon}

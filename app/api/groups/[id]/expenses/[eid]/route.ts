@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { authMiddleware } from "@/lib/middleware";
 import Expense from "@/models/Expense";
 import Group from "@/models/Group";
+import Notification from "@/models/Notification";
 
 const objectIdSchema = z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid user ID");
 
@@ -130,6 +131,15 @@ export async function PUT(
 
     await expense.save();
 
+    // Self-notification for edit
+    await Notification.create({
+      userId: user._id,
+      type: "expense_added",
+      message: `You edited "${expense.description}" in group.`,
+      metadata: { groupId, expenseId, isSelf: true },
+      isRead: false,
+    });
+
     return NextResponse.json({ data: expense, message: "Expense updated successfully" });
   } catch (err) {
     if (err instanceof z.ZodError) {
@@ -171,9 +181,19 @@ export async function DELETE(
       return NextResponse.json({ error: "Unauthorized. Only the expense creator or group admin can delete this expense." }, { status: 403 });
     }
 
+    const expenseDesc = expense.description;
     expense.isDeleted = true;
     expense.deletedAt = new Date();
     await expense.save();
+
+    // Self-notification for delete
+    await Notification.create({
+      userId: user._id,
+      type: "expense_added",
+      message: `You deleted "${expenseDesc}" from the group.`,
+      metadata: { groupId, expenseId, isSelf: true },
+      isRead: false,
+    });
 
     return NextResponse.json({ message: "Expense deleted successfully" });
   } catch (err) {

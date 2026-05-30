@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import ServiceWorkerRegister from "@/components/layout/ServiceWorkerRegister";
 import { ToastProvider } from "@/components/ui/Toast";
+import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -48,8 +49,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-dvh antialiased">
-        <ServiceWorkerRegister />
-        <ToastProvider>{children}</ToastProvider>
+        <ThemeProvider>
+          <ServiceWorkerRegister />
+          <ToastProvider>{children}</ToastProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

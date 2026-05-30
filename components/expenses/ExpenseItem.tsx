@@ -29,7 +29,10 @@ interface ExpenseItemProps {
 }
 
 const CATEGORY_EMOJIS: Record<string, string> = {
-  food: '🍕',
+  food: '🍔',
+  trip: '✈️',
+  home: '🏠',
+  fun: '🎮',
   travel: '✈️',
   shopping: '🛒',
   rent: '🏠',
@@ -67,31 +70,47 @@ export default function ExpenseItem({
   isEditable = false,
   isDeletable = false,
 }: ExpenseItemProps) {
-  const categoryKey = expense.category.toLowerCase();
+  const categoryKey = expense.category.toLowerCase().split(':')[0];
   const categoryEmoji = expense.categoryEmoji || CATEGORY_EMOJIS[categoryKey] || '📦';
   const paidBy = getPaidByLabel(expense.paidBy);
+  const customCategory = expense.category.startsWith('other:') ? expense.category.split('other:')[1] : null;
 
   return (
-    <div className="flex items-center gap-3 p-3 bg-white border-2 border-[#1c1b1b] rounded-xl shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]">
-      <div className="w-10 h-10 rounded-lg border-2 border-[#1c1b1b] bg-[#fcf9f8] flex items-center justify-center text-lg shrink-0">
+    <div
+      className="flex items-center gap-3 p-3 rounded-xl"
+      style={{
+        background: 'var(--t-card-bg)',
+        border: '2px solid var(--t-border)',
+        boxShadow: '1px 1px 0px 0px var(--t-shadow)',
+      }}
+    >
+      <div
+        className="w-10 h-10 rounded-lg flex items-center justify-center text-lg shrink-0"
+        style={{
+          background: 'var(--t-surface-2)',
+          border: '2px solid var(--t-border)',
+        }}
+      >
         {categoryEmoji}
       </div>
 
       <div className="flex-1 min-w-0">
-        <p className="font-medium font-['DM_Sans'] text-sm text-[#1c1b1b] truncate">
+        <p className="font-semibold font-['DM_Sans'] text-sm truncate" style={{ color: 'var(--t-on-surface)' }}>
           {expense.description}
         </p>
-        <p className="text-xs text-[#5d5c74] font-['DM_Sans']">
-          Paid by {paidBy} · {formatDate(expense.date)}
+        <p className="text-xs font-['DM_Sans'] truncate" style={{ color: 'var(--t-on-surface-muted)' }}>
+          Paid by {paidBy}
+          {customCategory ? ` · ${customCategory}` : ''}
+          {' ·'} {formatDate(expense.date)}
         </p>
       </div>
 
       <div className="text-right shrink-0">
-        <p className="font-bold font-['Space_Grotesk'] text-sm text-[#1c1b1b]">
+        <p className="font-bold font-['Space_Grotesk'] text-sm" style={{ color: 'var(--t-on-surface)' }}>
           {formatCurrency(expense.amount)}
         </p>
         {expense.myShare !== undefined && (
-          <p className="text-xs text-[#5d5c74] font-['DM_Sans']">
+          <p className="text-xs font-['DM_Sans']" style={{ color: 'var(--t-on-surface-muted)' }}>
             Your share: {formatCurrency(expense.myShare)}
           </p>
         )}
@@ -103,7 +122,13 @@ export default function ExpenseItem({
             <button
               type="button"
               onClick={onEdit}
-              className="w-8 h-8 rounded-full border-2 border-[#1c1b1b] bg-white flex items-center justify-center"
+              className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all active:scale-90"
+              style={{
+                border: '2px solid var(--t-border)',
+                background: 'var(--t-card-bg)',
+                color: 'var(--t-on-surface)',
+                boxShadow: '1px 1px 0px 0px var(--t-shadow)',
+              }}
               aria-label="Edit expense"
             >
               <span className="material-symbols-outlined text-[18px]">edit</span>
@@ -113,7 +138,13 @@ export default function ExpenseItem({
             <button
               type="button"
               onClick={onDelete}
-              className="w-8 h-8 rounded-full border-2 border-[#1c1b1b] bg-white text-[#ba1a1a] flex items-center justify-center"
+              className="w-8 h-8 rounded-full flex items-center justify-center cursor-pointer transition-all active:scale-90"
+              style={{
+                border: '2px solid var(--t-border)',
+                background: 'var(--t-danger-bg)',
+                color: 'var(--t-danger)',
+                boxShadow: '1px 1px 0px 0px var(--t-shadow)',
+              }}
               aria-label="Delete expense"
             >
               <span className="material-symbols-outlined text-[18px]">delete</span>

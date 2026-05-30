@@ -13,6 +13,16 @@ export interface IFriendRequest {
   status: "pending" | "accepted" | "declined";
 }
 
+export interface IPushSubscription {
+  endpoint: string;
+  keys?: {
+    p256dh: string;
+    auth: string;
+  };
+  expirationTime?: number | null;
+  createdAt?: Date;
+}
+
 export interface IUser extends Document {
   _id: Types.ObjectId;
   name: string;
@@ -20,8 +30,10 @@ export interface IUser extends Document {
   upiId: string;
   avatarUrl?: string;
   otp?: IOtp;
+  pendingEmail?: string;
   friends: Types.ObjectId[];
   friendRequests: IFriendRequest[];
+  pushSubscriptions?: IPushSubscription[];
   createdAt: Date;
   updatedAt: Date;
 }

@@ -36,8 +36,18 @@ const UserSchema = new Schema<IUser>(
     upiId: { type: String, default: "" },
     avatarUrl: { type: String },
     otp: { type: OtpSchema },
+    pendingEmail: { type: String },
     friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
     friendRequests: [FriendRequestSchema],
+    pushSubscriptions: [
+      {
+        endpoint: { type: String, required: true },
+        keys: { type: Schema.Types.Mixed },
+        expirationTime: { type: Number },
+        createdAt: { type: Date, default: Date.now },
+        _id: false,
+      },
+    ],
   },
   {
     timestamps: true,

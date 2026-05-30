@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/hooks/useAuth';
 import BottomNav from '@/components/layout/BottomNav';
 import InstallBanner from '@/components/layout/InstallBanner';
+import PushNotificationManager from '@/components/layout/PushNotificationManager';
 import Skeleton from '@/components/ui/Skeleton';
 
 export default function AppLayout({
@@ -23,7 +24,7 @@ export default function AppLayout({
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex flex-col justify-center items-center p-6 bg-[#fcf9f8] max-w-[600px] mx-auto gap-4">
+      <div className="min-h-screen flex flex-col justify-center items-center p-6 max-w-[600px] mx-auto gap-4" style={{ background: 'var(--t-surface)' }}>
         <Skeleton className="w-16 h-16 rounded-full" />
         <Skeleton className="w-48 h-6 rounded" />
         <Skeleton className="w-32 h-4 rounded" />
@@ -36,7 +37,7 @@ export default function AppLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fcf9f8] max-w-[600px] mx-auto relative pb-24">
+    <div className="min-h-screen flex flex-col max-w-[600px] mx-auto relative pb-24" style={{ background: 'var(--t-surface)', color: 'var(--t-on-surface)' }}>
       {/* Content wrapper with margin matching bottom navigation bar */}
       <main className="flex-1 px-4 py-6 w-full max-w-[600px] mx-auto overflow-y-auto">
         {children}
@@ -45,6 +46,7 @@ export default function AppLayout({
       {/* Persistent Navigation */}
       <BottomNav />
       <InstallBanner />
+      <PushNotificationManager />
     </div>
   );
 }

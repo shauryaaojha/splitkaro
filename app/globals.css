@@ -58,6 +58,238 @@
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
+   CSS Custom Properties — Theme Variables (applied via data-theme)
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  /* Default: Warm Orange (original) */
+  --t-primary: #aa3000;
+  --t-primary-light: #c45a2d;
+  --t-primary-container: #ffdbd0;
+  --t-accent: #5d5c74;
+  --t-accent-container: #e3e1f9;
+  --t-surface: #fcf9f8;
+  --t-surface-2: #f1edec;
+  --t-surface-3: #ebe7e6;
+  --t-on-surface: #1c1b1b;
+  --t-on-surface-muted: #5d5c74;
+  --t-border: #1c1b1b;
+  --t-success: #1b6d30;
+  --t-success-bg: #E8F8EE;
+  --t-success-light: #a4f6a8;
+  --t-danger: #ba1a1a;
+  --t-danger-bg: #ffdad6;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(28, 27, 27, 1);
+  --t-owe-color: #ff5f4e;
+  --t-owed-color: #2ee88a;
+  --t-owe-bg: rgba(255, 95, 78, 0.15);
+  --t-owed-bg: rgba(46, 232, 138, 0.15);
+}
+
+/* ── Theme: Ocean Blue ─────────────────────────────────────────────────── */
+[data-theme="ocean"] {
+  --t-primary: #0070c0;
+  --t-primary-light: #1e88e5;
+  --t-primary-container: #d0e8ff;
+  --t-accent: #00557a;
+  --t-accent-container: #c8eaf8;
+  --t-surface: #f0f8ff;
+  --t-surface-2: #e2f2ff;
+  --t-surface-3: #d0e8ff;
+  --t-on-surface: #001d3d;
+  --t-on-surface-muted: #00557a;
+  --t-border: #001d3d;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(0, 29, 61, 1);
+  --t-owe-color: #e53935;
+  --t-owed-color: #00c853;
+  --t-owe-bg: rgba(229, 57, 53, 0.1);
+  --t-owed-bg: rgba(0, 200, 83, 0.12);
+}
+
+/* ── Theme: Forest Green ─────────────────────────────────────────────── */
+[data-theme="forest"] {
+  --t-primary: #2e7d32;
+  --t-primary-light: #4caf50;
+  --t-primary-container: #c8e6c9;
+  --t-accent: #558b2f;
+  --t-accent-container: #dcedc8;
+  --t-surface: #f1f8e9;
+  --t-surface-2: #e8f5e9;
+  --t-surface-3: #dcedc8;
+  --t-on-surface: #1b5e20;
+  --t-on-surface-muted: #558b2f;
+  --t-border: #1b5e20;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(27, 94, 32, 1);
+  --t-owe-color: #d32f2f;
+  --t-owed-color: #00897b;
+  --t-owe-bg: rgba(211, 47, 47, 0.1);
+  --t-owed-bg: rgba(0, 137, 123, 0.12);
+}
+
+/* ── Theme: Royal Purple ─────────────────────────────────────────────── */
+[data-theme="royal"] {
+  --t-primary: #6a1b9a;
+  --t-primary-light: #8e24aa;
+  --t-primary-container: #e1bee7;
+  --t-accent: #4527a0;
+  --t-accent-container: #d1c4e9;
+  --t-surface: #f8f0ff;
+  --t-surface-2: #ede7f6;
+  --t-surface-3: #d1c4e9;
+  --t-on-surface: #1a0033;
+  --t-on-surface-muted: #6a1b9a;
+  --t-border: #1a0033;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(26, 0, 51, 1);
+  --t-owe-color: #c62828;
+  --t-owed-color: #00bcd4;
+  --t-owe-bg: rgba(198, 40, 40, 0.1);
+  --t-owed-bg: rgba(0, 188, 212, 0.12);
+}
+
+/* ── Theme: Sunset Pink ─────────────────────────────────────────────── */
+[data-theme="sunset"] {
+  --t-primary: #c62828;
+  --t-primary-light: #e53935;
+  --t-primary-container: #ffcdd2;
+  --t-accent: #ad1457;
+  --t-accent-container: #fce4ec;
+  --t-surface: #fff8f8;
+  --t-surface-2: #ffebee;
+  --t-surface-3: #ffcdd2;
+  --t-on-surface: #3e0000;
+  --t-on-surface-muted: #ad1457;
+  --t-border: #3e0000;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(62, 0, 0, 1);
+  --t-owe-color: #ff5252;
+  --t-owed-color: #00e676;
+  --t-owe-bg: rgba(255, 82, 82, 0.12);
+  --t-owed-bg: rgba(0, 230, 118, 0.12);
+}
+
+/* ── Theme: Slate ────────────────────────────────────────────────────── */
+[data-theme="slate"] {
+  --t-primary: #37474f;
+  --t-primary-light: #546e7a;
+  --t-primary-container: #cfd8dc;
+  --t-accent: #455a64;
+  --t-accent-container: #eceff1;
+  --t-surface: #f5f7f8;
+  --t-surface-2: #eceff1;
+  --t-surface-3: #cfd8dc;
+  --t-on-surface: #102027;
+  --t-on-surface-muted: #546e7a;
+  --t-border: #102027;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(16, 32, 39, 1);
+  --t-owe-color: #d32f2f;
+  --t-owed-color: #00897b;
+  --t-owe-bg: rgba(211, 47, 47, 0.1);
+  --t-owed-bg: rgba(0, 137, 123, 0.12);
+}
+
+/* ── Theme: Golden ───────────────────────────────────────────────────── */
+[data-theme="golden"] {
+  --t-primary: #e65100;
+  --t-primary-light: #ff6d00;
+  --t-primary-container: #ffe0b2;
+  --t-accent: #bf360c;
+  --t-accent-container: #fbe9e7;
+  --t-surface: #fffbf0;
+  --t-surface-2: #fff8e1;
+  --t-surface-3: #ffecb3;
+  --t-on-surface: #3e1000;
+  --t-on-surface-muted: #bf360c;
+  --t-border: #3e1000;
+  --t-card-bg: #ffffff;
+  --t-shadow: rgba(62, 16, 0, 1);
+  --t-owe-color: #e53935;
+  --t-owed-color: #43a047;
+  --t-owe-bg: rgba(229, 57, 53, 0.12);
+  --t-owed-bg: rgba(67, 160, 71, 0.12);
+}
+
+/* ── Dark Mode (applies over any theme) ─────────────────────────────── */
+[data-dark="true"] {
+  --t-surface: #121212;
+  --t-surface-2: #1e1e1e;
+  --t-surface-3: #2a2a2a;
+  --t-card-bg: #1e1e1e;
+  --t-on-surface: #f0eeee;
+  --t-on-surface-muted: #a0a0b0;
+  --t-border: #f0eeee;
+  --t-shadow: rgba(0, 0, 0, 0.8);
+  --t-primary-container: rgba(170, 48, 0, 0.25);
+  --t-accent-container: rgba(93, 92, 116, 0.25);
+  --t-success-bg: rgba(27, 109, 48, 0.25);
+  --t-danger-bg: rgba(186, 26, 26, 0.25);
+}
+
+[data-dark="true"][data-theme="ocean"] {
+  --t-surface: #0a1628;
+  --t-surface-2: #112040;
+  --t-surface-3: #1a2d55;
+  --t-card-bg: #112040;
+  --t-on-surface: #e0f0ff;
+  --t-on-surface-muted: #7ab5d8;
+  --t-border: #e0f0ff;
+}
+
+[data-dark="true"][data-theme="forest"] {
+  --t-surface: #0d1f10;
+  --t-surface-2: #1b3a1e;
+  --t-surface-3: #214726;
+  --t-card-bg: #1b3a1e;
+  --t-on-surface: #e0ffe4;
+  --t-on-surface-muted: #82c887;
+  --t-border: #e0ffe4;
+}
+
+[data-dark="true"][data-theme="royal"] {
+  --t-surface: #110020;
+  --t-surface-2: #1e0035;
+  --t-surface-3: #2b0049;
+  --t-card-bg: #1e0035;
+  --t-on-surface: #f0e0ff;
+  --t-on-surface-muted: #b388ff;
+  --t-border: #f0e0ff;
+}
+
+[data-dark="true"][data-theme="sunset"] {
+  --t-surface: #200000;
+  --t-surface-2: #380000;
+  --t-surface-3: #4a0000;
+  --t-card-bg: #380000;
+  --t-on-surface: #ffe0e0;
+  --t-on-surface-muted: #ff8a80;
+  --t-border: #ffe0e0;
+}
+
+[data-dark="true"][data-theme="slate"] {
+  --t-surface: #0a1015;
+  --t-surface-2: #132028;
+  --t-surface-3: #1d2f38;
+  --t-card-bg: #132028;
+  --t-on-surface: #e0edf5;
+  --t-on-surface-muted: #80a8bc;
+  --t-border: #e0edf5;
+}
+
+[data-dark="true"][data-theme="golden"] {
+  --t-surface: #1a0a00;
+  --t-surface-2: #2d1500;
+  --t-surface-3: #3d1e00;
+  --t-card-bg: #2d1500;
+  --t-on-surface: #ffe8d0;
+  --t-on-surface-muted: #ff9d66;
+  --t-border: #ffe8d0;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
    Base Styles
    ═══════════════════════════════════════════════════════════════════════════ */
 
@@ -68,10 +300,11 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--color-surface);
-  color: var(--color-on-surface);
+  background-color: var(--t-surface);
+  color: var(--t-on-surface);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -79,47 +312,48 @@ body {
    ═══════════════════════════════════════════════════════════════════════════ */
 
 .brutalist-shadow {
-  border: 2px solid var(--color-on-surface);
-  box-shadow: 2px 2px 0px var(--color-on-surface);
+  border: 2px solid var(--t-border);
+  box-shadow: 2px 2px 0px var(--t-shadow);
 }
 
 .brutalist-shadow-hover {
-  border: 2px solid var(--color-on-surface);
-  box-shadow: 2px 2px 0px var(--color-on-surface);
+  border: 2px solid var(--t-border);
+  box-shadow: 2px 2px 0px var(--t-shadow);
   transition: box-shadow 0.15s ease, transform 0.15s ease;
 }
 
 .brutalist-shadow-hover:hover {
-  box-shadow: 3px 3px 0px var(--color-on-surface);
+  box-shadow: 3px 3px 0px var(--t-shadow);
   transform: translate(-1px, -1px);
 }
 
 .brutalist-shadow-active,
 .brutalist-shadow-hover:active {
-  box-shadow: 0px 0px 0px var(--color-on-surface);
+  box-shadow: 0px 0px 0px var(--t-shadow);
   transform: translate(2px, 2px);
 }
 
 .brutalist-input {
-  border: 2px solid var(--color-on-surface);
+  border: 2px solid var(--t-border);
   border-radius: var(--radius-DEFAULT);
   padding: 0.75rem 1rem;
   font-family: var(--font-body);
   font-size: 0.9375rem;
-  background: var(--color-surface);
-  color: var(--color-on-surface);
+  background: var(--t-surface);
+  color: var(--t-on-surface);
   outline: none;
   width: 100%;
   transition: box-shadow 0.15s ease;
 }
 
 .brutalist-input:focus {
-  box-shadow: 2px 2px 0px var(--color-primary);
-  border-color: var(--color-primary);
+  box-shadow: 2px 2px 0px var(--t-primary);
+  border-color: var(--t-primary);
 }
 
 .brutalist-input::placeholder {
-  color: var(--color-outline);
+  color: var(--t-on-surface-muted);
+  opacity: 0.7;
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -128,12 +362,12 @@ body {
 
 .grid-pattern {
   background-image: linear-gradient(
-      var(--color-outline-variant) 1px,
+      rgba(255,255,255,0.08) 1px,
       transparent 1px
     ),
     linear-gradient(
       to right,
-      var(--color-outline-variant) 1px,
+      rgba(255,255,255,0.08) 1px,
       transparent 1px
     );
   background-size: 24px 24px;
@@ -148,6 +382,19 @@ body {
   display: none;
 }
 
+/* Theme-aware transitions */
+*, *::before, *::after {
+  transition-property: background-color, border-color, color, box-shadow;
+  transition-duration: 0.15s;
+  transition-timing-function: ease;
+}
+
+/* Override transition for transforms to prevent sluggishness */
+button, a, .no-transition {
+  transition-property: background-color, border-color, color, box-shadow, transform, opacity;
+  transition-duration: 0.15s;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Material Symbols Overrides
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -158,4 +405,26 @@ body {
     "wght" 400,
     "GRAD" 0,
     "opsz" 24;
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   Push notification permission banner animations
+   ═══════════════════════════════════════════════════════════════════════════ */
+@keyframes slide-up {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.15); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 1.8s ease-in-out infinite;
 }

@@ -5,6 +5,7 @@ import React from 'react';
 interface CardProps {
   children: React.ReactNode;
   className?: string;
+  style?: React.CSSProperties;
   onClick?: () => void;
   pressable?: boolean;
 }
@@ -12,6 +13,7 @@ interface CardProps {
 export default function Card({
   children,
   className = '',
+  style,
   onClick,
   pressable = false,
 }: CardProps) {
@@ -33,14 +35,20 @@ export default function Card({
           : undefined
       }
       className={[
-        'bg-white border-2 border-[#1c1b1b] rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] p-4',
+        'rounded-2xl p-4',
         isPressable
-          ? 'cursor-pointer transition-all duration-100 active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]'
+          ? 'cursor-pointer transition-all duration-100 active:translate-x-[1px] active:translate-y-[1px]'
           : '',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
+      style={{
+        background: 'var(--t-card-bg)',
+        border: '2px solid var(--t-border)',
+        boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+        ...style,
+      }}
     >
       {children}
     </div>

@@ -3,7 +3,6 @@
 import React, { useMemo, useState } from 'react';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
-import Card from '@/components/ui/Card';
 import SplitTypeSelector from './SplitTypeSelector';
 import Avatar from '@/components/ui/Avatar';
 
@@ -20,6 +19,7 @@ interface ExpenseFormProps {
     };
     role: string;
   }[];
+  currentUserId?: string;
   onSubmit: (data: {
     description: string;
     amount: number;
@@ -48,6 +48,7 @@ const CATEGORIES = [
 
 export default function ExpenseForm({
   members,
+  currentUserId,
   onSubmit,
   initialData,
 }: ExpenseFormProps) {
@@ -65,10 +66,19 @@ export default function ExpenseForm({
     return { included: initialIncluded, custom: initialCustom };
   }, [members, initialData]);
 
+  // Default paidBy: prefer current user, then first member
+  const defaultPaidBy = useMemo(() => {
+    if (initialData?.paidBy) return initialData.paidBy;
+    const currentMember = members.find(m => m.userId._id === currentUserId);
+    if (currentMember) return currentMember.userId._id;
+    return members[0]?.userId._id || '';
+  }, [initialData, members, currentUserId]);
+
   const [description, setDescription] = useState(initialData?.description || '');
   const [amount, setAmount] = useState<string>(initialData?.amount?.toString() || '');
   const [category, setCategory] = useState(initialData?.category || 'other');
-  const [paidBy, setPaidBy] = useState(initialData?.paidBy || (members[0]?.userId._id || ''));
+  const [customCategory, setCustomCategory] = useState('');
+  const [paidBy, setPaidBy] = useState(defaultPaidBy);
   const [date, setDate] = useState(
     initialData?.date
       ? new Date(initialData.date).toISOString().substring(0, 10)
@@ -175,10 +185,15 @@ export default function ExpenseForm({
         };
       });
 
+      // For "Other" category, append custom category label if provided
+      const finalCategory = category === 'other' && customCategory.trim()
+        ? `other:${customCategory.trim()}`
+        : category;
+
       await onSubmit({
         description,
         amount: numericAmount,
-        category,
+        category: finalCategory,
         paidBy,
         date,
         splits: finalSplits,
@@ -194,12 +209,19 @@ export default function ExpenseForm({
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6 w-full pb-8">
       {/* Dynamic Big Amount Display Input */}
-      <div className="flex flex-col items-center justify-center py-6 bg-white border-2 border-[#1c1b1b] rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037] mb-1">
+      <div
+        className="flex flex-col items-center justify-center py-6 rounded-2xl"
+        style={{
+          background: 'var(--t-card-bg)',
+          border: '2px solid var(--t-border)',
+          boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+        }}
+      >
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] mb-1" style={{ color: 'var(--t-on-surface-muted)' }}>
           Amount
         </span>
         <div className="flex items-center justify-center max-w-full">
-          <span className="text-4xl font-['Syne'] font-extrabold text-[#aa3000] mr-1">₹</span>
+          <span className="text-4xl font-['Syne'] font-extrabold mr-1" style={{ color: 'var(--t-primary)' }}>₹</span>
           <input
             type="text"
             inputMode="decimal"
@@ -211,11 +233,12 @@ export default function ExpenseForm({
                 setAmount(val);
               }
             }}
-            className="text-4xl font-['Syne'] font-extrabold text-[#1c1b1b] bg-transparent outline-none border-none text-center max-w-[200px] placeholder:text-[#5d5c74]/30"
+            className="text-4xl font-['Syne'] font-extrabold bg-transparent outline-none border-none text-center max-w-[200px]"
+            style={{ color: 'var(--t-on-surface)' }}
           />
         </div>
         {errors.amount && (
-          <span className="text-xs text-[#ba1a1a] font-bold font-['Space_Grotesk'] mt-2">
+          <span className="text-xs font-bold font-['Space_Grotesk'] mt-2" style={{ color: 'var(--t-danger)' }}>
             {errors.amount}
           </span>
         )}
@@ -244,7 +267,7 @@ export default function ExpenseForm({
 
       {/* Categories Chips Selection */}
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']" style={{ color: 'var(--t-on-surface-muted)' }}>
           Category
         </span>
         <div className="flex flex-wrap gap-2">
@@ -255,13 +278,14 @@ export default function ExpenseForm({
                 key={cat.id}
                 type="button"
                 onClick={() => setCategory(cat.id)}
-                className={[
-                  'flex items-center gap-1.5 px-4 py-2 border-2 border-[#1c1b1b] rounded-full font-bold text-sm',
-                  'transition-all duration-150 cursor-pointer shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
-                  isSelected
-                    ? 'bg-[#ffdbd0] text-[#aa3000] border-[#aa3000] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_0px_rgba(170,48,0,1)]'
-                    : 'bg-[#fcf9f8] text-[#1c1b1b] hover:bg-[#eae7e7] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]',
-                ].join(' ')}
+                className="flex items-center gap-1.5 px-4 py-2 rounded-full font-bold text-sm transition-all duration-150 cursor-pointer"
+                style={{
+                  border: `2px solid ${isSelected ? 'var(--t-primary)' : 'var(--t-border)'}`,
+                  background: isSelected ? 'var(--t-primary-container)' : 'var(--t-surface)',
+                  color: isSelected ? 'var(--t-primary)' : 'var(--t-on-surface)',
+                  boxShadow: isSelected ? '3px 3px 0px 0px var(--t-primary)' : '2px 2px 0px 0px var(--t-shadow)',
+                  transform: isSelected ? 'translate(-1px, -1px)' : undefined,
+                }}
               >
                 <span>{cat.emoji}</span>
                 <span className="font-['Space_Grotesk']">{cat.label}</span>
@@ -269,39 +293,64 @@ export default function ExpenseForm({
             );
           })}
         </div>
+        {/* Custom "Other" text field */}
+        {category === 'other' && (
+          <input
+            type="text"
+            placeholder="Describe the category (e.g. Gifts, Medical...)"
+            value={customCategory}
+            onChange={(e) => setCustomCategory(e.target.value)}
+            maxLength={40}
+            className="mt-1 px-4 py-3 rounded-xl font-['DM_Sans'] text-sm font-semibold outline-none"
+            style={{
+              border: '2px solid var(--t-border)',
+              background: 'var(--t-surface)',
+              color: 'var(--t-on-surface)',
+              boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+            }}
+          />
+        )}
       </div>
 
       {/* Paid By Selector */}
       <div className="flex flex-col gap-2">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']" style={{ color: 'var(--t-on-surface-muted)' }}>
           Paid By
         </span>
-        <div className="relative border-2 border-[#1c1b1b] rounded-lg shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-[#fcf9f8] overflow-hidden">
+        <div
+          className="relative rounded-lg overflow-hidden"
+          style={{
+            border: '2px solid var(--t-border)',
+            background: 'var(--t-surface)',
+            boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+          }}
+        >
           <select
             value={paidBy}
             onChange={(e) => setPaidBy(e.target.value)}
-            className="w-full h-12 pl-10 pr-4 bg-transparent font-bold text-[#1c1b1b] font-['Space_Grotesk'] outline-none appearance-none cursor-pointer"
+            className="w-full h-12 pl-10 pr-4 bg-transparent font-bold font-['Space_Grotesk'] outline-none appearance-none cursor-pointer"
+            style={{ color: 'var(--t-on-surface)' }}
           >
             {members.map((member) => (
               <option key={member.userId._id} value={member.userId._id}>
-                {member.userId.name} {member.userId._id === members[0]?.userId._id ? '(You)' : ''}
+                {member.userId.name} {member.userId._id === currentUserId ? '(You)' : ''}
               </option>
             ))}
           </select>
-          <span className="absolute left-3 top-3 material-symbols-outlined text-[#5d5c74]">
+          <span className="absolute left-3 top-3 material-symbols-outlined" style={{ color: 'var(--t-on-surface-muted)' }}>
             person_filled
           </span>
-          <span className="absolute right-3 top-3 material-symbols-outlined text-[#5d5c74] pointer-events-none">
+          <span className="absolute right-3 top-3 material-symbols-outlined pointer-events-none" style={{ color: 'var(--t-on-surface-muted)' }}>
             arrow_drop_down
           </span>
         </div>
-        {errors.paidBy && <span className="text-xs text-[#ba1a1a] font-bold font-['Space_Grotesk']">{errors.paidBy}</span>}
+        {errors.paidBy && <span className="text-xs font-bold font-['Space_Grotesk']" style={{ color: 'var(--t-danger)' }}>{errors.paidBy}</span>}
       </div>
 
       {/* Split Type Tabs */}
       <div className="flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']" style={{ color: 'var(--t-on-surface-muted)' }}>
             Split Strategy
           </span>
         </div>
@@ -310,15 +359,23 @@ export default function ExpenseForm({
 
       {/* Split Details & Members Checklist */}
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']" style={{ color: 'var(--t-on-surface-muted)' }}>
           Split Distribution
         </span>
 
-        <Card className="flex flex-col gap-4">
+        <div
+          className="flex flex-col gap-4 p-4 rounded-2xl"
+          style={{
+            background: 'var(--t-card-bg)',
+            border: '2px solid var(--t-border)',
+            boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+          }}
+        >
           {members.map((member) => {
             const mId = member.userId._id;
             const isIncluded = splitType === 'equal' ? includedMembers[mId] : true;
-            
+            const isCurrentUser = mId === currentUserId;
+
             // Calculate dynamic share preview
             let shareVal = 0;
             if (splitType === 'equal') {
@@ -333,20 +390,22 @@ export default function ExpenseForm({
             return (
               <div
                 key={mId}
-                className={[
-                  'flex items-center justify-between pb-3 border-b border-[#eae7e7] last:border-b-0 last:pb-0',
-                  !isIncluded ? 'opacity-40' : '',
-                ].join(' ')}
+                className="flex items-center justify-between pb-3 last:pb-0 last:border-b-0"
+                style={{
+                  borderBottom: '1px solid var(--t-surface-3)',
+                  opacity: !isIncluded ? 0.4 : 1,
+                }}
               >
                 <div className="flex items-center gap-3">
                   {splitType === 'equal' ? (
                     <button
                       type="button"
                       onClick={() => handleToggleInclude(mId)}
-                      className={[
-                        'w-6 h-6 border-2 border-[#1c1b1b] rounded flex items-center justify-center cursor-pointer',
-                        isIncluded ? 'bg-[#aa3000]' : 'bg-transparent',
-                      ].join(' ')}
+                      className="w-6 h-6 rounded flex items-center justify-center cursor-pointer"
+                      style={{
+                        border: '2px solid var(--t-border)',
+                        background: isIncluded ? 'var(--t-primary)' : 'transparent',
+                      }}
                     >
                       {isIncluded && (
                         <span className="material-symbols-outlined text-white text-[18px]">
@@ -364,11 +423,11 @@ export default function ExpenseForm({
                     size="sm"
                   />
                   <div className="flex flex-col">
-                    <span className="font-bold text-sm text-[#1c1b1b]">
-                      {member.userId.name}
+                    <span className="font-bold text-sm" style={{ color: 'var(--t-on-surface)' }}>
+                      {member.userId.name} {isCurrentUser ? <span className="text-[10px] font-bold px-1.5 py-0.5 rounded-full" style={{ background: 'var(--t-primary-container)', color: 'var(--t-primary)' }}>You</span> : null}
                     </span>
                     {splitType === 'percentage' && isIncluded && (
-                      <span className="text-xs text-[#5d5c74] font-semibold">
+                      <span className="text-xs font-semibold" style={{ color: 'var(--t-on-surface-muted)' }}>
                         {customSplits[mId] ? `${customSplits[mId]}%` : '0%'}
                       </span>
                     )}
@@ -377,37 +436,51 @@ export default function ExpenseForm({
 
                 <div className="flex items-center gap-2">
                   {splitType === 'equal' && (
-                    <span className="font-['Syne'] font-extrabold text-[#1c1b1b]">
+                    <span className="font-['Syne'] font-extrabold" style={{ color: 'var(--t-on-surface)' }}>
                       ₹{shareVal.toFixed(2)}
                     </span>
                   )}
 
                   {splitType === 'exact' && (
-                    <div className="flex items-center bg-[#fcf9f8] border-2 border-[#1c1b1b] rounded-lg px-2 py-1 w-28">
-                      <span className="text-xs font-bold text-[#5d5c74] mr-1">₹</span>
+                    <div
+                      className="flex items-center rounded-lg px-2 py-1 w-28"
+                      style={{
+                        background: 'var(--t-surface)',
+                        border: '2px solid var(--t-border)',
+                      }}
+                    >
+                      <span className="text-xs font-bold mr-1" style={{ color: 'var(--t-on-surface-muted)' }}>₹</span>
                       <input
                         type="text"
                         placeholder="0.0"
                         value={customSplits[mId] || ''}
                         onChange={(e) => handleCustomSplitChange(mId, e.target.value)}
                         className="w-full text-right outline-none bg-transparent font-bold text-sm"
+                        style={{ color: 'var(--t-on-surface)' }}
                       />
                     </div>
                   )}
 
                   {splitType === 'percentage' && (
                     <div className="flex flex-col items-end gap-1">
-                      <div className="flex items-center bg-[#fcf9f8] border-2 border-[#1c1b1b] rounded-lg px-2 py-1 w-20">
+                      <div
+                        className="flex items-center rounded-lg px-2 py-1 w-20"
+                        style={{
+                          background: 'var(--t-surface)',
+                          border: '2px solid var(--t-border)',
+                        }}
+                      >
                         <input
                           type="text"
                           placeholder="0"
                           value={customSplits[mId] || ''}
                           onChange={(e) => handleCustomSplitChange(mId, e.target.value)}
                           className="w-full text-right outline-none bg-transparent font-bold text-sm mr-1"
+                          style={{ color: 'var(--t-on-surface)' }}
                         />
-                        <span className="text-xs font-bold text-[#5d5c74]">%</span>
+                        <span className="text-xs font-bold" style={{ color: 'var(--t-on-surface-muted)' }}>%</span>
                       </div>
-                      <span className="text-xs text-[#5d5c74] font-semibold">
+                      <span className="text-xs font-semibold" style={{ color: 'var(--t-on-surface-muted)' }}>
                         ₹{shareVal.toFixed(2)}
                       </span>
                     </div>
@@ -416,16 +489,19 @@ export default function ExpenseForm({
               </div>
             );
           })}
-        </Card>
+        </div>
         {errors.splits && (
-          <span className="text-xs text-[#ba1a1a] font-bold font-['Space_Grotesk'] mt-1">
+          <span className="text-xs font-bold font-['Space_Grotesk'] mt-1" style={{ color: 'var(--t-danger)' }}>
             {errors.splits}
           </span>
         )}
       </div>
 
       {errors.api && (
-        <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-3 rounded-lg font-bold font-['Space_Grotesk'] text-sm">
+        <div
+          className="p-3 rounded-lg font-bold font-['Space_Grotesk'] text-sm"
+          style={{ border: '2px solid var(--t-danger)', background: 'var(--t-danger-bg)', color: 'var(--t-danger)' }}
+        >
           {errors.api}
         </div>
       )}

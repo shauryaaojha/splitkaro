@@ -107,7 +107,18 @@ export async function POST(
       createdBy: user._id,
     });
 
-    // Create notifications for group members (except creator of notification)
+    // Create notifications for all group members (others get "X added", creator gets "You added")
+    const selfNotification = {
+      userId: user._id,
+      type: "expense_added",
+      message: `You added "${validated.description}" of ₹${validated.amount.toFixed(2)} in "${group.name}".`,
+      metadata: {
+        groupId: group._id.toString(),
+        expenseId: expense._id.toString(),
+        isSelf: true,
+      },
+      isRead: false,
+    };
     const membersToNotify = group.members.filter(m => m.userId.toString() !== user._id.toString());
     const notifications = membersToNotify.map(m => ({
       userId: m.userId,
@@ -120,9 +131,7 @@ export async function POST(
       isRead: false,
     }));
 
-    if (notifications.length > 0) {
-      await Notification.insertMany(notifications);
-    }
+    await Notification.insertMany([selfNotification, ...notifications]);
 
     return NextResponse.json({ data: expense, message: "Expense added successfully" }, { status: 201 });
   } catch (err) {

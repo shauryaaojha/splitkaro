@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
 import useSWR from 'swr';
 import { useAuth } from '@/hooks/useAuth';
@@ -10,6 +10,7 @@ import BalanceSummaryCard from '@/components/home/BalanceSummaryCard';
 import ActivityItem from '@/components/home/ActivityItem';
 import Avatar from '@/components/ui/Avatar';
 import Skeleton from '@/components/ui/Skeleton';
+import InviteModal from '@/components/home/InviteModal';
 
 interface DashboardData {
   totalOwed: number;
@@ -40,6 +41,7 @@ const dashboardFetcher = async (url: string): Promise<DashboardData> => {
 export default function HomeDashboard() {
   const { user } = useAuth();
   const { notifications, isLoading: loadingNotifications } = useNotifications();
+  const [showInvite, setShowInvite] = useState(false);
 
   const { data: dashboard, isLoading: loadingDashboard } = useSWR<DashboardData>(
     '/api/dashboard/balances',
@@ -54,6 +56,33 @@ export default function HomeDashboard() {
 
   // Get first 4 recent activities
   const recentActivities = notifications.slice(0, 4);
+
+  const quickActions = [
+    {
+      href: '/groups',
+      icon: 'add_circle',
+      label: 'Add Exp',
+      primary: true,
+    },
+    {
+      href: '/groups/new',
+      icon: 'group_add',
+      label: 'New Grp',
+      primary: false,
+    },
+    {
+      href: '/groups',
+      icon: 'handshake',
+      label: 'Settle',
+      primary: false,
+    },
+    {
+      href: '/friends',
+      icon: 'person_add',
+      label: 'Friends',
+      primary: false,
+    },
+  ];
 
   return (
     <div className="flex flex-col gap-6 pt-16">
@@ -70,7 +99,7 @@ export default function HomeDashboard() {
                 src={user?.avatarUrl}
                 size="sm"
               />
-              <span className="hidden sm:inline font-bold font-['Space_Grotesk'] text-sm text-[#1c1b1b]">
+              <span className="hidden sm:inline font-bold font-['Space_Grotesk'] text-sm" style={{ color: 'var(--t-on-surface)' }}>
                 {greetingName}
               </span>
             </Link>
@@ -78,17 +107,21 @@ export default function HomeDashboard() {
               href="/activity"
               className={[
                 'w-10 h-10 flex items-center justify-center rounded-full relative',
-                'border-2 border-[#1c1b1b] bg-white shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
-                'active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]',
+                'active:translate-x-[1px] active:translate-y-[1px]',
                 'transition-all duration-100 cursor-pointer',
               ].join(' ')}
+              style={{
+                border: '2px solid var(--t-border)',
+                background: 'var(--t-card-bg)',
+                boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+              }}
               aria-label="Activity logs"
             >
-              <span className="material-symbols-outlined text-[22px] text-[#1c1b1b]">
+              <span className="material-symbols-outlined text-[22px]" style={{ color: 'var(--t-on-surface)' }}>
                 notifications
               </span>
               {notifications.some((n) => !n.isRead) && (
-                <span className="absolute top-0 right-0 w-3 h-3 bg-[#aa3000] border-2 border-white rounded-full" />
+                <span className="absolute top-0 right-0 w-3 h-3 border-2 border-white rounded-full" style={{ background: 'var(--t-primary)' }} />
               )}
             </Link>
           </div>
@@ -97,17 +130,17 @@ export default function HomeDashboard() {
 
       {/* Greeting Header */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']" style={{ color: 'var(--t-on-surface-muted)' }}>
           Welcome Back
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2 className="text-2xl font-bold font-['Space_Grotesk'] leading-tight" style={{ color: 'var(--t-on-surface)' }}>
           Hey {greetingName}! 👋
         </h2>
       </div>
 
       {/* Dynamic Consolidated Balance Card */}
       {loadingDashboard ? (
-        <Skeleton className="w-full h-[180px] rounded-2xl border-2 border-[#1c1b1b]" />
+        <Skeleton className="w-full h-[200px] rounded-2xl" />
       ) : dashboard ? (
         <BalanceSummaryCard
           totalOwed={dashboard.totalOwed}
@@ -118,79 +151,81 @@ export default function HomeDashboard() {
 
       {/* Scrollable Quick Actions Slider */}
       <section className="flex flex-col gap-2">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037] px-1">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] px-1" style={{ color: 'var(--t-on-surface-muted)' }}>
           Quick Actions
         </span>
         <div className="flex gap-4 overflow-x-auto hide-scrollbar py-2 px-1">
-          {/* Add Expense (directs to group list to pick a group) */}
-          <Link
-            href="/groups"
-            className="flex-none flex flex-col items-center justify-center w-24 h-24 bg-[#aa3000] text-white rounded-xl border-2 border-[#1c1b1b] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] transition-all"
-          >
-            <span className="material-symbols-outlined mb-1 text-[28px]">
-              add_circle
-            </span>
-            <span className="text-xs font-bold font-['Space_Grotesk'] tracking-wide">
-              Add Exp
-            </span>
-          </Link>
+          {quickActions.map((action) => (
+            <Link
+              key={action.label}
+              href={action.href}
+              className="flex-none flex flex-col items-center justify-center w-24 h-24 rounded-xl active:translate-x-[1px] active:translate-y-[1px] transition-all"
+              style={action.primary ? {
+                background: 'var(--t-primary)',
+                color: '#fff',
+                border: '2px solid var(--t-border)',
+                boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+              } : {
+                background: 'var(--t-card-bg)',
+                color: 'var(--t-on-surface)',
+                border: '2px solid var(--t-border)',
+                boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+              }}
+            >
+              <span className="material-symbols-outlined mb-1 text-[28px]" style={{ color: action.primary ? '#fff' : 'var(--t-accent)' }}>
+                {action.icon}
+              </span>
+              <span className="text-xs font-bold font-['Space_Grotesk'] tracking-wide">
+                {action.label}
+              </span>
+            </Link>
+          ))}
 
-          {/* Create New Group */}
-          <Link
-            href="/groups/new"
-            className="flex-none flex flex-col items-center justify-center w-24 h-24 bg-white text-[#1c1b1b] rounded-xl border-2 border-[#1c1b1b] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] transition-all hover:bg-[#eae7e7]/30"
+          {/* Invite to App button */}
+          <button
+            type="button"
+            onClick={() => setShowInvite(true)}
+            className="flex-none flex flex-col items-center justify-center w-24 h-24 rounded-xl active:translate-x-[1px] active:translate-y-[1px] transition-all cursor-pointer"
+            style={{
+              background: 'var(--t-card-bg)',
+              color: 'var(--t-on-surface)',
+              border: '2px solid var(--t-border)',
+              boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+            }}
           >
-            <span className="material-symbols-outlined mb-1 text-[28px] text-[#5d5c74]">
-              group_add
+            <span className="material-symbols-outlined mb-1 text-[28px]" style={{ color: 'var(--t-accent)' }}>
+              send
             </span>
             <span className="text-xs font-bold font-['Space_Grotesk'] tracking-wide">
-              New Grp
+              Invite
             </span>
-          </Link>
-
-          {/* Quick Settlements */}
-          <Link
-            href="/groups"
-            className="flex-none flex flex-col items-center justify-center w-24 h-24 bg-white text-[#1c1b1b] rounded-xl border-2 border-[#1c1b1b] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] transition-all hover:bg-[#eae7e7]/30"
-          >
-            <span className="material-symbols-outlined mb-1 text-[28px] text-[#5d5c74]">
-              handshake
-            </span>
-            <span className="text-xs font-bold font-['Space_Grotesk'] tracking-wide">
-              Settle
-            </span>
-          </Link>
-
-          {/* Friends Tab */}
-          <Link
-            href="/friends"
-            className="flex-none flex flex-col items-center justify-center w-24 h-24 bg-white text-[#1c1b1b] rounded-xl border-2 border-[#1c1b1b] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] transition-all hover:bg-[#eae7e7]/30"
-          >
-            <span className="material-symbols-outlined mb-1 text-[28px] text-[#5d5c74]">
-              person_add
-            </span>
-            <span className="text-xs font-bold font-['Space_Grotesk'] tracking-wide">
-              Add Friend
-            </span>
-          </Link>
+          </button>
         </div>
       </section>
 
       {/* Recent Activity List */}
       <section className="flex flex-col gap-3">
         <div className="flex items-center justify-between px-1">
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']" style={{ color: 'var(--t-on-surface-muted)' }}>
             Recent Activity
           </span>
           <Link
             href="/activity"
-            className="text-xs font-bold font-['Space_Grotesk'] text-[#aa3000] hover:underline"
+            className="text-xs font-bold font-['Space_Grotesk'] hover:underline"
+            style={{ color: 'var(--t-primary)' }}
           >
             View All
           </Link>
         </div>
 
-        <div className="bg-white border-2 border-[#1c1b1b] rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] overflow-hidden flex flex-col">
+        <div
+          className="rounded-2xl overflow-hidden flex flex-col"
+          style={{
+            background: 'var(--t-card-bg)',
+            border: '2px solid var(--t-border)',
+            boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+          }}
+        >
           {loadingNotifications ? (
             <div className="flex flex-col p-4 gap-3">
               <Skeleton className="w-full h-12 rounded-xl" />
@@ -198,19 +233,19 @@ export default function HomeDashboard() {
               <Skeleton className="w-full h-12 rounded-xl" />
             </div>
           ) : recentActivities.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 px-4 text-[#5d5c74]">
-              <span className="material-symbols-outlined text-4xl mb-2 text-[#5d5c74]/50">
+            <div className="flex flex-col items-center justify-center py-10 px-4" style={{ color: 'var(--t-on-surface-muted)' }}>
+              <span className="material-symbols-outlined text-4xl mb-2" style={{ opacity: 0.4 }}>
                 notifications_off
               </span>
               <span className="text-sm font-bold font-['Space_Grotesk']">
                 No recent activity
               </span>
-              <span className="text-xs text-[#5d5c74]/70 mt-1 text-center">
+              <span className="text-xs mt-1 text-center" style={{ opacity: 0.7 }}>
                 Expenses and settlements inside groups will appear here!
               </span>
             </div>
           ) : (
-            <div className="flex flex-col p-2 divide-y divide-[#eae7e7]">
+            <div className="flex flex-col p-2 divide-y" style={{ borderColor: 'var(--t-surface-3)' }}>
               {recentActivities.map((act) => (
                 <ActivityItem key={act._id} activity={act} />
               ))}
@@ -218,6 +253,9 @@ export default function HomeDashboard() {
           )}
         </div>
       </section>
+
+      {/* Invite Modal */}
+      {showInvite && <InviteModal onClose={() => setShowInvite(false)} />}
     </div>
   );
 }

@@ -81,3 +81,71 @@ export async function sendOTPEmail(
     throw new Error("Failed to send verification email");
   }
 }
+
+/**
+ * Send an app invite email to a friend.
+ */
+export async function sendInviteEmail(
+  toEmail: string,
+  senderName: string
+): Promise<void> {
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://splitkaro.app';
+  const html = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Join me on SplitKaro</title>
+</head>
+<body style="margin:0;padding:0;background-color:#fcf9f8;font-family:'Segoe UI',Roboto,sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="max-width:480px;margin:32px auto;background:#ffffff;border:2px solid #1c1b1b;border-radius:16px;overflow:hidden;">
+    <tr>
+      <td style="background-color:#aa3000;padding:24px 32px;">
+        <h1 style="margin:0;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:-0.5px;">
+          Split<span style="font-weight:400;">Karo</span>
+        </h1>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:32px;">
+        <p style="margin:0 0 8px;font-size:16px;color:#1c1b1b;">
+          👋 <strong>${senderName}</strong> invited you to join SplitKaro!
+        </p>
+        <p style="margin:0 0 24px;font-size:14px;color:#5d5c74;">
+          SplitKaro makes it easy to split expenses with friends and groups — no more mental math or awkward money talks.
+        </p>
+        <div style="text-align:center;margin:24px 0;">
+          <a href="${appUrl}" style="background:#aa3000;color:#ffffff;text-decoration:none;font-size:16px;font-weight:700;padding:14px 32px;border-radius:12px;border:2px solid #1c1b1b;display:inline-block;box-shadow:2px 2px 0px #1c1b1b;">
+            Join SplitKaro 🚀
+          </a>
+        </div>
+        <p style="margin:24px 0 0;font-size:12px;color:#5d5c74;">
+          Or copy this link: <a href="${appUrl}" style="color:#aa3000;">${appUrl}</a>
+        </p>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:16px 32px;border-top:1px solid #e0e0e0;">
+        <p style="margin:0;font-size:11px;color:#9e9e9e;text-align:center;">
+          © ${new Date().getFullYear()} SplitKaro · Split expenses, not friendships.
+        </p>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>`.trim();
+
+  try {
+    await transporter.sendMail({
+      from: emailFrom,
+      to: toEmail,
+      subject: `${senderName} invited you to SplitKaro 🎉`,
+      html,
+    });
+    console.info(`[SMTP] Invite email sent to ${toEmail}`);
+  } catch (err) {
+    console.error("[SMTP] Failed to send invite email", err);
+    throw new Error("Failed to send invite email");
+  }
+}

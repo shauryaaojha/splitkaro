@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useGroup } from '@/hooks/useGroup';
 import { useExpenses } from '@/hooks/useExpenses';
+import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/Toast';
 import TopBar from '@/components/layout/TopBar';
 import ExpenseForm from '@/components/expenses/ExpenseForm';
@@ -28,6 +29,7 @@ export default function AddExpensePage() {
 
   const { group, isLoading: loadingGroup, error: groupError } = useGroup(groupId);
   const { mutate: mutateExpenses } = useExpenses(groupId);
+  const { user } = useAuth();
   const [error, setError] = useState<string | null>(null);
 
   const expenseFormMembers: ExpenseFormMember[] = (group?.members || []).map((member) => {
@@ -126,6 +128,7 @@ export default function AddExpensePage() {
         <ExpenseForm
           groupId={groupId}
           members={expenseFormMembers}
+          currentUserId={user?._id}
           onSubmit={handleSubmit}
         />
       )}
