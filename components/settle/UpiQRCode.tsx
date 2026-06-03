@@ -28,7 +28,7 @@ export default function UpiQRCode({
           pa: payeeUpiId,
           pn: payeeName,
           am: amount.toFixed(2),
-          tn: `Settling split of ₹${amount.toFixed(2)} on SplitKaro`,
+          tn: "SplitKaro Settlement",
         });
 
         const res = await fetch(`/api/upi/qr?${queryParams.toString()}`);
