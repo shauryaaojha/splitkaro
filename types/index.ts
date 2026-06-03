@@ -139,6 +139,6 @@ export interface UpiParams {
   pn: string;
   /** Amount */
   am: string;
-  /** Transaction note */
-  tn: string;
+  /** Transaction note (optional — omit to avoid bank risk-engine rejections) */
+  tn?: string;
 }
