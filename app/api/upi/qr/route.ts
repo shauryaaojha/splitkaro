@@ -7,7 +7,6 @@ const upiQrSchema = z.object({
   pa: z.string().regex(/^[\w.-]+@[\w.-]+$/, "Invalid UPI ID"),
   pn: z.string().min(1).max(80),
   am: z.coerce.number().positive().max(100000),
-  tn: z.string().max(120).optional().default("SplitKaro Payment"),
 });
 
 export async function GET(request: NextRequest) {
@@ -16,7 +15,6 @@ export async function GET(request: NextRequest) {
     pa: searchParams.get("pa"),
     pn: searchParams.get("pn"),
     am: searchParams.get("am"),
-    tn: searchParams.get("tn") || undefined,
   });
 
   if (!parsed.success) {
@@ -31,7 +29,6 @@ export async function GET(request: NextRequest) {
       pa: parsed.data.pa,
       pn: parsed.data.pn,
       am: parsed.data.am.toFixed(2),
-      tn: parsed.data.tn,
     });
 
     const qrDataUrl = await QRCode.toDataURL(upiUrl, {

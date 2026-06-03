@@ -18,7 +18,6 @@ export default function UpiDeepLinks({
     pa: payeeUpiId,
     pn: payeeName,
     am: amount.toFixed(2),
-    tn: `SplitKaro Settlement`,
   };
 
   const upiUrl = buildUpiUrl(params);
