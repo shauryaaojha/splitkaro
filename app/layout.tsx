@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import ServiceWorkerRegister from "@/components/layout/ServiceWorkerRegister";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
+import SplashScreen from "@/components/layout/SplashScreen";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -49,6 +50,7 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-dvh antialiased">
+        <SplashScreen />
         <ThemeProvider>
           <ServiceWorkerRegister />
           <ToastProvider>{children}</ToastProvider>
