@@ -5,54 +5,18 @@ import type { UpiParams } from "@/types";
  * Format: upi://pay?pa=...&pn=...&am=...&tn=...&cu=INR
  */
 export function buildUpiUrl(params: UpiParams): string {
-  const qs = new URLSearchParams({
-    pa: params.pa,
-    pn: params.pn,
-    am: params.am,
-    tn: params.tn,
-    cu: "INR",
-  });
-  return `upi://pay?${qs.toString()}`;
-}
+  const searchParams = new URLSearchParams();
+  
+  if (params.pa) searchParams.set("pa", params.pa);
+  if (params.pn) searchParams.set("pn", params.pn);
+  if (params.am) searchParams.set("am", params.am.toString());
+  if (params.tn) searchParams.set("tn", params.tn);
+  searchParams.set("cu", "INR");
 
-/**
- * Build a Google Pay payment URL.
- */
-export function buildGPayUrl(params: UpiParams): string {
-  const qs = new URLSearchParams({
-    pa: params.pa,
-    pn: params.pn,
-    am: params.am,
-    tn: params.tn,
-    cu: "INR",
-  });
-  return `tez://upi/pay?${qs.toString()}`;
-}
-
-/**
- * Build a PhonePe payment URL.
- */
-export function buildPhonePeUrl(params: UpiParams): string {
-  const qs = new URLSearchParams({
-    pa: params.pa,
-    pn: params.pn,
-    am: params.am,
-    tn: params.tn,
-    cu: "INR",
-  });
-  return `phonepe://pay?${qs.toString()}`;
-}
-
-/**
- * Build a Paytm payment URL.
- */
-export function buildPaytmUrl(params: UpiParams): string {
-  const qs = new URLSearchParams({
-    pa: params.pa,
-    pn: params.pn,
-    am: params.am,
-    tn: params.tn,
-    cu: "INR",
-  });
-  return `paytmmp://upi/pay?${qs.toString()}`;
+  // UPI spec expects spaces to be %20, not + which URLSearchParams produces
+  const queryString = searchParams.toString().replace(/\+/g, "%20");
+  const finalUrl = `upi://pay?${queryString}`;
+  
+  console.log("Generated UPI URL:", finalUrl);
+  return finalUrl;
 }
