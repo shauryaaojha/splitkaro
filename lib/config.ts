@@ -26,8 +26,16 @@ export const smtp = {
   pass: env("SMTP_PASS"),
 } as const;
 
-/** Sender address for outgoing emails */
-export const emailFrom = env("EMAIL_FROM", "SplitKaro <noreply@splitkaro.app>");
+/**
+ * Sender address for outgoing emails.
+ *
+ * IMPORTANT: when sending through a personal Gmail SMTP account, this MUST use
+ * the same gmail.com address that authenticates with SMTP (smtp.user) — or a
+ * verified "Send mail as" alias. A mismatched From (e.g. a custom domain you
+ * don't have SPF/DKIM/DMARC set up for) fails authentication alignment and
+ * Gmail routes the message straight to spam.
+ */
+export const emailFrom = env("EMAIL_FROM", `SplitKaro <${smtp.user}>`);
 
 /** Public-facing app URL (no trailing slash) */
 export const appUrl = env("NEXT_PUBLIC_APP_URL", "http://localhost:3000");

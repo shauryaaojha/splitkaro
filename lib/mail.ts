@@ -1,5 +1,7 @@
 import nodemailer from "nodemailer";
 import { smtp, emailFrom } from "./config";
+import { connectDB } from "./db";
+import Unsubscribe from "@/models/Unsubscribe";
 
 const transporter = nodemailer.createTransport({
   host: smtp.host,
@@ -68,12 +70,30 @@ export async function sendOTPEmail(
 </body>
 </html>`.trim();
 
+  // Plain-text alternative — HTML-only emails are a strong spam signal.
+  const text = [
+    `Hey ${name},`,
+    ``,
+    `Use this code to verify your email. It expires in 10 minutes:`,
+    ``,
+    `    ${otp}`,
+    ``,
+    `If you didn't request this, you can safely ignore this email.`,
+    ``,
+    `— SplitKaro · Split expenses, not friendships.`,
+  ].join("\n");
+
   try {
     await transporter.sendMail({
       from: emailFrom,
       to: email,
-      subject: `SplitKaro verification code`,
+      subject: `Your SplitKaro verification code`,
+      text,
       html,
+      headers: {
+        // Helps Gmail classify this as transactional, not bulk/promo.
+        "X-Entity-Ref-ID": `otp-${Date.now()}`,
+      },
     });
     console.info(`[SMTP] Verification email sent successfully to ${email}`);
   } catch (err) {
@@ -90,6 +110,19 @@ export async function sendInviteEmail(
   senderName: string
 ): Promise<void> {
   const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://splitkaro.app';
+
+  // Respect prior opt-outs — sending to people who unsubscribed is a major
+  // spam-complaint driver and will hurt deliverability for everyone.
+  await connectDB();
+  const optedOut = await Unsubscribe.exists({ email: toEmail.toLowerCase() });
+  if (optedOut) {
+    console.info(`[SMTP] Skipping invite to unsubscribed address ${toEmail}`);
+    return;
+  }
+
+  const unsubUrl = `${appUrl}/api/unsubscribe?email=${encodeURIComponent(
+    toEmail
+  )}`;
   const html = `
 <!DOCTYPE html>
 <html lang="en">
@@ -130,18 +163,42 @@ export async function sendInviteEmail(
         <p style="margin:0;font-size:11px;color:#9e9e9e;text-align:center;">
           © ${new Date().getFullYear()} SplitKaro · Split expenses, not friendships.
         </p>
+        <p style="margin:8px 0 0;font-size:11px;color:#9e9e9e;text-align:center;">
+          Don't want these emails? <a href="${unsubUrl}" style="color:#9e9e9e;">Unsubscribe</a>.
+        </p>
       </td>
     </tr>
   </table>
 </body>
 </html>`.trim();
 
+  // Plain-text alternative — HTML-only emails are a strong spam signal.
+  const text = [
+    `${senderName} invited you to join SplitKaro!`,
+    ``,
+    `SplitKaro makes it easy to split expenses with friends and groups —`,
+    `no more mental math or awkward money talks.`,
+    ``,
+    `Join here: ${appUrl}`,
+    ``,
+    `— SplitKaro · Split expenses, not friendships.`,
+    `Unsubscribe: ${unsubUrl}`,
+  ].join("\n");
+
   try {
     await transporter.sendMail({
       from: emailFrom,
       to: toEmail,
-      subject: `${senderName} invited you to SplitKaro 🎉`,
+      // Keep the subject clean — emoji in subjects looks promotional to spam filters.
+      subject: `${senderName} invited you to SplitKaro`,
+      text,
       html,
+      headers: {
+        // Required by Gmail/Yahoo bulk-sender rules; lets recipients opt out.
+        // The URL must accept a POST for RFC 8058 one-click unsubscribe.
+        "List-Unsubscribe": `<${unsubUrl}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
     });
     console.info(`[SMTP] Invite email sent to ${toEmail}`);
   } catch (err) {
