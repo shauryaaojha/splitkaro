@@ -12,6 +12,7 @@ interface GroupAnalyticsProps {
 
 export default function GroupAnalytics({ groupId }: GroupAnalyticsProps) {
   const { expenses, isLoading, error } = useExpenses(groupId);
+  const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
   if (isLoading) {
     return (
@@ -29,8 +30,6 @@ export default function GroupAnalytics({ groupId }: GroupAnalyticsProps) {
       </div>
     );
   }
-
-  const [expandedDate, setExpandedDate] = useState<string | null>(null);
 
   // Compute KPIs
   const totalSpend = expenses.reduce((acc, exp) => acc + exp.amount, 0);
