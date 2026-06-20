@@ -8,6 +8,7 @@ import TopBar from '@/components/layout/TopBar';
 import ExpenseItem from '@/components/expenses/ExpenseItem';
 import BalanceMatrix from '@/components/groups/BalanceMatrix';
 import MemberProfileSheet from '@/components/groups/MemberProfileSheet';
+import GroupAnalytics from '@/components/groups/GroupAnalytics';
 import Skeleton from '@/components/ui/Skeleton';
 import Button from '@/components/ui/Button';
 import Avatar from '@/components/ui/Avatar';
@@ -16,7 +17,7 @@ import { useExpenses } from '@/hooks/useExpenses';
 import { useAuth } from '@/hooks/useAuth';
 import { useToast } from '@/components/ui/Toast';
 
-type Tab = 'expenses' | 'balances' | 'settle' | 'members';
+type Tab = 'expenses' | 'balances' | 'settle' | 'members' | 'analytics';
 
 interface SimplifiedTransaction {
   from: { _id: string; name: string; email: string; upiId: string; avatarUrl?: string };
@@ -185,6 +186,7 @@ export default function GroupDetailPage() {
     { id: 'balances' as Tab, label: 'Balances', icon: 'account_balance' },
     { id: 'settle' as Tab, label: 'Settle Up', icon: 'handshake' },
     { id: 'members' as Tab, label: `Members (${memberCount})`, icon: 'group' },
+    { id: 'analytics' as Tab, label: 'Analytics', icon: 'analytics' },
   ];
 
   return (
@@ -316,6 +318,11 @@ export default function GroupDetailPage() {
               <BalanceMatrix balances={balanceMatrix} />
             ) : null}
           </div>
+        )}
+
+        {/* Analytics Tab */}
+        {activeTab === 'analytics' && (
+          <GroupAnalytics groupId={groupId} />
         )}
 
         {/* Settle Tab */}
