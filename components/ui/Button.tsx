@@ -15,12 +15,16 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<ButtonVariant, string> = {
-  primary:
-    'bg-[#aa3000] text-white border-2 border-[#1c1b1b]',
-  ghost:
-    'bg-transparent text-[#1c1b1b] border-2 border-[#5d5c74]',
-  danger:
-    'bg-[#ba1a1a] text-white border-2 border-[#1c1b1b]',
+  primary: 'text-white border-2',
+  ghost: 'bg-transparent border-2',
+  danger: 'text-white border-2',
+};
+
+// Theme variables so buttons stay legible in dark mode
+const variantStyles: Record<ButtonVariant, React.CSSProperties> = {
+  primary: { background: 'var(--t-primary)', borderColor: 'var(--t-border)' },
+  ghost: { color: 'var(--t-on-surface)', borderColor: 'var(--t-accent)' },
+  danger: { background: 'var(--t-danger)', borderColor: 'var(--t-border)' },
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -47,17 +51,20 @@ export default function Button({
       disabled={isDisabled}
       className={[
         "inline-flex items-center justify-center rounded-full font-bold font-['Space_Grotesk'] tracking-wide",
-        'shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
         'transition-all duration-100',
-        'active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]',
+        'active:translate-x-[1px] active:translate-y-[1px]',
         variantClasses[variant],
         sizeClasses[size],
         fullWidth ? 'w-full' : '',
-        isDisabled ? 'opacity-50 cursor-not-allowed active:translate-x-0 active:translate-y-0 active:shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]' : 'cursor-pointer',
+        isDisabled ? 'opacity-50 cursor-not-allowed active:translate-x-0 active:translate-y-0' : 'cursor-pointer',
         className,
       ]
         .filter(Boolean)
         .join(' ')}
+      style={{
+        boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+        ...variantStyles[variant],
+      }}
       {...rest}
     >
       {loading ? (

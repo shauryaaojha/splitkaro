@@ -70,23 +70,23 @@ export default function JoinGroupPage() {
   const loading = loadingPreview || loadingAuth;
 
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center p-4 bg-[#F5F0E8] max-w-[600px] mx-auto w-full">
+    <div className="sk-light-surface min-h-screen flex flex-col justify-center items-center p-4 bg-[#F5F0E8] max-w-[600px] mx-auto w-full">
       {loading ? (
-        <Card className="w-full max-w-[400px] flex flex-col items-center gap-4 bg-white border-2 border-[#1c1b1b]">
+        <Card className="w-full max-w-[400px] flex flex-col items-center gap-4 bg-white border-2 border-ink">
           <Skeleton className="w-16 h-16 rounded-full" />
           <Skeleton className="w-48 h-6 rounded" />
           <Skeleton className="w-32 h-4 rounded" />
           <Skeleton className="w-full h-12 rounded-full mt-4" />
         </Card>
       ) : error ? (
-        <Card className="w-full max-w-[400px] flex flex-col items-center gap-4 bg-white border-2 border-[#1c1b1b] text-center">
-          <span className="material-symbols-outlined text-5xl text-[#ba1a1a]">
+        <Card className="w-full max-w-[400px] flex flex-col items-center gap-4 bg-white border-2 border-ink text-center">
+          <span className="material-symbols-outlined text-5xl text-danger">
             error_outline
           </span>
-          <h2 className="text-xl font-bold font-['Space_Grotesk'] text-[#1c1b1b]">
+          <h2 className="text-xl font-bold font-['Space_Grotesk'] text-ink">
             Invite Expired
           </h2>
-          <p className="text-xs text-[#5d5c74] font-semibold max-w-[260px]">
+          <p className="text-xs text-ink-muted font-semibold max-w-[260px]">
             {error.message || 'This invite link is invalid, expired, or the group has been archived.'}
           </p>
           <Button
@@ -100,7 +100,7 @@ export default function JoinGroupPage() {
           </Button>
         </Card>
       ) : preview ? (
-        <Card className="w-full max-w-[400px] flex flex-col items-center gap-5 bg-white border-2 border-[#1c1b1b] text-center relative overflow-hidden">
+        <Card className="w-full max-w-[400px] flex flex-col items-center gap-5 bg-white border-2 border-ink text-center relative overflow-hidden">
           <div className="absolute -top-10 -right-10 w-24 h-24 bg-[#ffdbd0]/50 rounded-full opacity-40 blur-xl pointer-events-none"></div>
 
           {/* Group Avatar */}
@@ -109,13 +109,13 @@ export default function JoinGroupPage() {
           </div>
 
           <div className="flex flex-col">
-            <span className="text-[10px] font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5d5c74] mb-1">
+            <span className="text-[10px] font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted mb-1">
               You&apos;ve Been Invited
             </span>
-            <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+            <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-ink leading-tight">
               Join &quot;{preview.name}&quot;
             </h2>
-            <p className="text-xs text-[#5d5c74] font-semibold mt-1">
+            <p className="text-xs text-ink-muted font-semibold mt-1">
               Created by {preview.creatorName} · {preview.memberCount} members
             </p>
           </div>
@@ -136,7 +136,7 @@ export default function JoinGroupPage() {
           </div>
 
           {!user && (
-            <p className="text-[10px] text-[#5d5c74] font-semibold mt-1">
+            <p className="text-[10px] text-ink-muted font-semibold mt-1">
               You must have a SplitKaro account to join shared groups.
             </p>
           )}

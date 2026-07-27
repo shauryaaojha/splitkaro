@@ -114,7 +114,7 @@ export default function GroupExpensesPage() {
             className={`px-3 py-2 rounded-full text-sm font-semibold transition-all border-2 ${
               sortBy === 'date'
                 ? 'bg-[#FF4D00] text-white border-[#FF4D00]'
-                : 'bg-white text-[#1A1A1A] border-[#E0D9CC]'
+                : 'bg-card text-ink border-soft'
             }`}
           >
             Recent
@@ -124,7 +124,7 @@ export default function GroupExpensesPage() {
             className={`px-3 py-2 rounded-full text-sm font-semibold transition-all border-2 ${
               sortBy === 'amount'
                 ? 'bg-[#FF4D00] text-white border-[#FF4D00]'
-                : 'bg-white text-[#1A1A1A] border-[#E0D9CC]'
+                : 'bg-card text-ink border-soft'
             }`}
           >
             Highest
@@ -139,7 +139,7 @@ export default function GroupExpensesPage() {
               className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all border-2 ${
                 filterCategory === 'all'
                   ? 'bg-[#FF4D00] text-white border-[#FF4D00]'
-                  : 'bg-white text-[#1A1A1A] border-[#E0D9CC]'
+                  : 'bg-card text-ink border-soft'
               }`}
             >
               All Categories
@@ -151,7 +151,7 @@ export default function GroupExpensesPage() {
                 className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all border-2 ${
                   filterCategory === cat
                     ? 'bg-[#FF4D00] text-white border-[#FF4D00]'
-                    : 'bg-white text-[#1A1A1A] border-[#E0D9CC]'
+                    : 'bg-card text-ink border-soft'
                 }`}
               >
                 {cat}
@@ -168,7 +168,7 @@ export default function GroupExpensesPage() {
               className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all border-2 ${
                 filterPaidBy === 'all'
                   ? 'bg-[#FF4D00] text-white border-[#FF4D00]'
-                  : 'bg-white text-[#1A1A1A] border-[#E0D9CC]'
+                  : 'bg-card text-ink border-soft'
               }`}
             >
               All Members
@@ -180,7 +180,7 @@ export default function GroupExpensesPage() {
                 className={`px-3 py-2 rounded-full text-sm font-semibold whitespace-nowrap transition-all border-2 ${
                   filterPaidBy === payer._id
                     ? 'bg-[#FF4D00] text-white border-[#FF4D00]'
-                    : 'bg-white text-[#1A1A1A] border-[#E0D9CC]'
+                    : 'bg-card text-ink border-soft'
                 }`}
               >
                 {payer.name}
@@ -214,12 +214,12 @@ export default function GroupExpensesPage() {
           ))
         ) : error ? (
           <Card className="text-center py-8">
-            <p className="text-[#6B6B6B] text-sm">Failed to load expenses</p>
+            <p className="text-ink-muted text-sm">Failed to load expenses</p>
           </Card>
         ) : filtered.length === 0 ? (
           <Card className="text-center py-12">
             <p className="text-5xl mb-2">📭</p>
-            <p className="text-[#6B6B6B] font-semibold mb-4">
+            <p className="text-ink-muted font-semibold mb-4">
               {expenses.length === 0 ? 'No expenses yet' : 'No matching expenses'}
             </p>
             {expenses.length === 0 && (

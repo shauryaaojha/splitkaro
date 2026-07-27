@@ -37,7 +37,7 @@ export default function MemberAvatarStack({
       ))}
       {overflow > 0 && (
         <div
-          className="-ml-2 w-8 h-8 rounded-full border-2 border-[#1c1b1b] bg-[#eae7e7] flex items-center justify-center text-xs font-bold font-['Space_Grotesk'] text-[#1c1b1b]"
+          className="-ml-2 w-8 h-8 rounded-full border-2 border-ink bg-surface-3 flex items-center justify-center text-xs font-bold font-['Space_Grotesk'] text-ink"
           style={{ zIndex: 0 }}
         >
           +{overflow}

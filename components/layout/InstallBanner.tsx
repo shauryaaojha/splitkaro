@@ -63,22 +63,22 @@ export default function InstallBanner() {
         aria-hidden="true"
       />
       {/* Sheet */}
-      <div className="relative z-10 w-full max-w-[600px] bg-white border-t-2 border-x-2 border-[#1c1b1b] rounded-t-2xl shadow-[0px_-2px_0px_0px_rgba(26,26,26,1)] p-6 animate-[slideUp_250ms_ease-out]">
+      <div className="relative z-10 w-full max-w-[600px] bg-card border-t-2 border-x-2 border-ink rounded-t-2xl shadow-[0px_-2px_0px_0px_rgba(26,26,26,1)] p-6 animate-[slideUp_250ms_ease-out]">
         {/* Drag handle */}
         <div className="flex justify-center mb-4">
-          <div className="w-10 h-1 rounded-full bg-[#eae7e7]" />
+          <div className="w-10 h-1 rounded-full bg-surface-3" />
         </div>
 
         <div className="flex items-center gap-4 mb-5">
           {/* App icon */}
-          <div className="w-14 h-14 rounded-2xl border-2 border-[#1c1b1b] bg-[#aa3000] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center shrink-0">
+          <div className="w-14 h-14 rounded-2xl border-2 border-ink bg-[#aa3000] shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center shrink-0">
             <span className="text-white font-bold font-['Syne'] text-xl">S</span>
           </div>
           <div>
-            <h3 className="text-lg font-bold font-['Space_Grotesk'] text-[#1c1b1b]">
+            <h3 className="text-lg font-bold font-['Space_Grotesk'] text-ink">
               Install SplitKaro
             </h3>
-            <p className="text-sm text-[#5d5c74] font-['DM_Sans']">
+            <p className="text-sm text-ink-muted font-['DM_Sans']">
               Add to home screen for the best experience
             </p>
           </div>

@@ -116,7 +116,7 @@ export default function OtpInput({
                   ? "border-error bg-error-container text-error shadow-[2px_2px_0px_0px_rgba(186,26,26,1)]"
                   : filled
                   ? "border-primary bg-primary-container text-primary shadow-[2px_2px_0px_0px_rgba(170,48,0,1)]"
-                  : "border-[#1c1b1b] bg-white text-[#1c1b1b] shadow-[2px_2px_0px_0px_rgba(28,27,27,1)]",
+                  : "border-ink bg-card text-ink shadow-[2px_2px_0px_0px_rgba(28,27,27,1)]",
               ].join(' ')}
             />
           );

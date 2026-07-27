@@ -47,7 +47,7 @@ export default function BottomSheet({
       <div
         className={[
           'relative z-10 w-full max-w-[600px]',
-          'bg-white border-t-2 border-x-2 border-[#1c1b1b]',
+          'bg-card border-t-2 border-x-2 border-ink',
           'rounded-t-2xl shadow-[0px_-2px_0px_0px_rgba(26,26,26,1)]',
           'animate-[slideUp_250ms_ease-out]',
           'max-h-[85vh] overflow-y-auto',
@@ -58,12 +58,12 @@ export default function BottomSheet({
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-[#eae7e7]" />
+          <div className="w-10 h-1 rounded-full bg-surface-3" />
         </div>
 
         {title && (
-          <div className="px-5 pb-3 pt-1 border-b border-[#eae7e7]">
-            <h2 className="text-lg font-bold font-['Space_Grotesk'] text-[#1c1b1b]">
+          <div className="px-5 pb-3 pt-1 border-b border-soft">
+            <h2 className="text-lg font-bold font-['Space_Grotesk'] text-ink">
               {title}
             </h2>
           </div>

@@ -20,7 +20,7 @@ export default function SplitTypeSelector({
   onChange,
 }: SplitTypeSelectorProps) {
   return (
-    <div className="flex border-2 border-[#1c1b1b] rounded-full overflow-hidden shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-[#fcf9f8]">
+    <div className="flex border-2 border-ink rounded-full overflow-hidden shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] bg-surface">
       {OPTIONS.map((option) => {
         const isActive = value === option.value;
         return (
@@ -33,9 +33,9 @@ export default function SplitTypeSelector({
               'transition-colors duration-150 cursor-pointer',
               isActive
                 ? 'bg-[#aa3000] text-white'
-                : 'bg-transparent text-[#5d5c74] hover:bg-[#eae7e7]',
+                : 'bg-transparent text-ink-muted hover:bg-surface-3',
               // Add borders between segments
-              'border-r-2 border-[#1c1b1b] last:border-r-0',
+              'border-r-2 border-ink last:border-r-0',
             ].join(' ')}
           >
             <span className="material-symbols-outlined text-[18px]">

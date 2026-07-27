@@ -23,10 +23,11 @@ export default function Skeleton({
     <div
       aria-hidden="true"
       className={[
-        'animate-pulse bg-[#eae7e7]',
+        'animate-pulse',
         variantClasses[variant],
         className,
       ].join(' ')}
+      style={{ background: 'var(--t-surface-3)' }}
     />
   );
 }

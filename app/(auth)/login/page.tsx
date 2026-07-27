@@ -73,26 +73,26 @@ function LoginForm() {
     <div className="w-full max-w-[600px] mx-auto px-4">
       {/* Logo area */}
       <div className="flex justify-center mb-8">
-        <div className="w-16 h-16 bg-[#aa3000] border-2 border-[#1c1b1b] rounded-2xl shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center">
+        <div className="w-16 h-16 bg-[#aa3000] border-2 border-ink rounded-2xl shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center">
           <span className="text-white text-2xl font-bold font-['Syne']">S</span>
         </div>
       </div>
 
       {/* Heading */}
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] mb-2">
+        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-ink mb-2">
           Welcome Back
         </h1>
-        <p className="text-[#5d5c74] font-['DM_Sans']">
+        <p className="text-ink-muted font-['DM_Sans']">
           Enter your email to receive a login OTP
         </p>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-[#ba1a1a] rounded-lg flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#ba1a1a] text-[20px]">error</span>
-          <p className="text-sm text-[#ba1a1a] font-['DM_Sans']">{error}</p>
+        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-danger rounded-lg flex items-center gap-2">
+          <span className="material-symbols-outlined text-danger text-[20px]">error</span>
+          <p className="text-sm text-danger font-['DM_Sans']">{error}</p>
         </div>
       )}
 
@@ -124,7 +124,7 @@ function LoginForm() {
         {/* Divider */}
         <div className="flex items-center gap-3 my-5">
           <span className="flex-1 h-[2px] bg-[#1c1b1b]/15" />
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5d5c74]">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
             or
           </span>
           <span className="flex-1 h-[2px] bg-[#1c1b1b]/15" />
@@ -134,9 +134,9 @@ function LoginForm() {
       </div>
 
       {/* Footer link */}
-      <p className="text-center text-sm text-[#5d5c74] font-['DM_Sans']">
+      <p className="text-center text-sm text-ink-muted font-['DM_Sans']">
         Don&apos;t have an account?{' '}
-        <Link href="/register" className="text-[#aa3000] font-bold hover:underline">
+        <Link href="/register" className="text-primary-ink font-bold hover:underline">
           Sign Up
         </Link>
       </p>

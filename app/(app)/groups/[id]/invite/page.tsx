@@ -40,21 +40,21 @@ export default function GroupInvitePage() {
 
       {/* Header title */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
           Add Members
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-ink leading-tight">
           Share Invite Link
         </h2>
       </div>
 
       {isLoading ? (
         <div className="flex flex-col gap-4">
-          <Skeleton className="w-full h-80 rounded-2xl border-2 border-[#1c1b1b]" />
-          <Skeleton className="w-full h-40 rounded-2xl border-2 border-[#1c1b1b]" />
+          <Skeleton className="w-full h-80 rounded-2xl border-2 border-ink" />
+          <Skeleton className="w-full h-40 rounded-2xl border-2 border-ink" />
         </div>
       ) : error || !group ? (
-        <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-4 rounded-2xl font-bold font-['Space_Grotesk'] text-sm text-center">
+        <div className="border-2 border-danger bg-danger-soft text-danger p-4 rounded-2xl font-bold font-['Space_Grotesk'] text-sm text-center">
           Failed to load group details. Please go back and try again.
         </div>
       ) : (
@@ -67,14 +67,14 @@ export default function GroupInvitePage() {
 
           {/* List of current group members */}
           <div className="flex flex-col gap-3">
-            <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037] px-1">
+            <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted px-1">
               Joined Members ({members.length})
             </span>
             <Card className="flex flex-col gap-4">
               {members.map((member) => (
                 <div
                   key={member._id}
-                  className="flex items-center justify-between pb-3 border-b border-[#eae7e7] last:border-b-0 last:pb-0"
+                  className="flex items-center justify-between pb-3 border-b border-soft last:border-b-0 last:pb-0"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar
@@ -83,19 +83,19 @@ export default function GroupInvitePage() {
                       size="sm"
                     />
                     <div className="flex flex-col">
-                      <span className="font-bold text-sm text-[#1c1b1b]">
+                      <span className="font-bold text-sm text-ink">
                         {member.name}
                       </span>
-                      <span className="text-xs text-[#5d5c74] font-semibold">
+                      <span className="text-xs text-ink-muted font-semibold">
                         {member.email || ''}
                       </span>
                     </div>
                   </div>
                   <span className={[
-                    'text-[10px] font-bold uppercase tracking-wider font-["Space_Grotesk"] px-2.5 py-1 rounded-full border border-[#1c1b1b]',
+                    'text-[10px] font-bold uppercase tracking-wider font-["Space_Grotesk"] px-2.5 py-1 rounded-full border border-ink',
                     member.role === 'admin'
-                      ? 'bg-[#ffdbd0] text-[#aa3000]'
-                      : 'bg-[#eae7e7] text-[#1c1b1b]',
+                      ? 'bg-[#ffdbd0] text-primary-ink'
+                      : 'bg-surface-3 text-ink',
                   ].join(' ')}>
                     {member.role}
                   </span>

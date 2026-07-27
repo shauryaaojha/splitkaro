@@ -108,20 +108,20 @@ export default function FriendsPage() {
 
       {/* Header Info */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
           Directory
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-ink leading-tight">
           Manage Friends
         </h2>
-        <p className="text-sm font-semibold text-[#5d5c74] mt-0.5 leading-snug">
+        <p className="text-sm font-semibold text-ink-muted mt-0.5 leading-snug">
           Invite friends to split bills, settle up, and track ledgers.
         </p>
       </div>
 
       {/* Invite Friend Form */}
-      <Card className="flex flex-col gap-3 bg-white border-2 border-[#1c1b1b]">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+      <Card className="flex flex-col gap-3 bg-white border-2 border-ink">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
           Add Friend by Email
         </span>
         <form onSubmit={handleSendInvite} className="flex flex-col gap-3">
@@ -149,17 +149,17 @@ export default function FriendsPage() {
       {/* Pending Invitations list */}
       {pendingRequests.length > 0 && (
         <div className="flex flex-col gap-3">
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#ba1a1a] px-1">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-danger px-1">
             Pending Friend Requests ({pendingRequests.length})
           </span>
-          <Card className="flex flex-col gap-4 bg-white border-2 border-[#1c1b1b]">
+          <Card className="flex flex-col gap-4 bg-white border-2 border-ink">
             {(pendingRequests as FriendRequest[]).map((req) => {
               const requester = req.from;
               if (!requester || typeof requester === 'string') return null;
               return (
                 <div
                   key={requester._id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-[#eae7e7] last:border-b-0 last:pb-0 gap-3"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-soft last:border-b-0 last:pb-0 gap-3"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar
@@ -168,10 +168,10 @@ export default function FriendsPage() {
                       size="sm"
                     />
                     <div className="flex flex-col">
-                      <span className="font-bold text-sm text-[#1c1b1b]">
+                      <span className="font-bold text-sm text-ink">
                         {requester.name}
                       </span>
-                      <span className="text-xs text-[#5d5c74] font-semibold">
+                      <span className="text-xs text-ink-muted font-semibold">
                         {requester.email}
                       </span>
                     </div>
@@ -181,14 +181,14 @@ export default function FriendsPage() {
                     <button
                       type="button"
                       onClick={() => handleRespond(requester._id, 'decline')}
-                      className="bg-transparent border-2 border-[#ba1a1a] text-[#ba1a1a] px-3.5 py-1.5 rounded-full font-bold text-xs uppercase font-['Space_Grotesk'] cursor-pointer hover:bg-[#ba1a1a]/5"
+                      className="bg-transparent border-2 border-danger text-danger px-3.5 py-1.5 rounded-full font-bold text-xs uppercase font-['Space_Grotesk'] cursor-pointer hover:bg-[#ba1a1a]/5"
                     >
                       Decline
                     </button>
                     <button
                       type="button"
                       onClick={() => handleRespond(requester._id, 'accept')}
-                      className="bg-[#1b6d30] border-2 border-[#1c1b1b] text-white px-3.5 py-1.5 rounded-full font-bold text-xs uppercase font-['Space_Grotesk'] cursor-pointer shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] hover:bg-[#1b6d30]/90 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
+                      className="bg-[#1b6d30] border-2 border-ink text-white px-3.5 py-1.5 rounded-full font-bold text-xs uppercase font-['Space_Grotesk'] cursor-pointer shadow-[1px_1px_0px_0px_rgba(26,26,26,1)] hover:bg-[#1b6d30]/90 active:translate-x-[1px] active:translate-y-[1px] active:shadow-none"
                     >
                       Accept
                     </button>
@@ -202,29 +202,29 @@ export default function FriendsPage() {
 
       {/* Friends list */}
       <div className="flex flex-col gap-3 pb-8">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037] px-1">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted px-1">
           Your Friends
         </span>
 
-        <Card className="flex flex-col gap-4 bg-white border-2 border-[#1c1b1b]">
+        <Card className="flex flex-col gap-4 bg-white border-2 border-ink">
           {loadingFriends ? (
             <div className="flex flex-col gap-3">
               <Skeleton className="w-full h-10 rounded-lg" />
               <Skeleton className="w-full h-10 rounded-lg" />
             </div>
           ) : friendsError ? (
-            <div className="text-xs text-[#ba1a1a] font-bold font-['Space_Grotesk'] text-center">
+            <div className="text-xs text-danger font-bold font-['Space_Grotesk'] text-center">
               Failed to load friends.
             </div>
           ) : !friends || friends.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-10 px-4 text-[#5d5c74] text-center">
-              <span className="material-symbols-outlined text-4xl mb-2 text-[#5d5c74]/50">
+            <div className="flex flex-col items-center justify-center py-10 px-4 text-ink-muted text-center">
+              <span className="material-symbols-outlined text-4xl mb-2 text-ink-muted/50">
                 person_off
               </span>
-              <span className="text-sm font-bold font-['Space_Grotesk'] text-[#1c1b1b]">
+              <span className="text-sm font-bold font-['Space_Grotesk'] text-ink">
                 No friends added yet
               </span>
-              <span className="text-xs text-[#5d5c74]/70 mt-1 max-w-[220px]">
+              <span className="text-xs text-ink-muted/70 mt-1 max-w-[220px]">
                 Add friends using the email input above to start sharing expenses!
               </span>
             </div>
@@ -233,7 +233,7 @@ export default function FriendsPage() {
               {friends.map((friend) => (
                 <div
                   key={friend._id}
-                  className="flex items-center justify-between pb-3 border-b border-[#eae7e7] last:border-b-0 last:pb-0"
+                  className="flex items-center justify-between pb-3 border-b border-soft last:border-b-0 last:pb-0"
                 >
                   <div className="flex items-center gap-3">
                     <Avatar
@@ -242,16 +242,16 @@ export default function FriendsPage() {
                       size="sm"
                     />
                     <div className="flex flex-col">
-                      <span className="font-bold text-sm text-[#1c1b1b]">
+                      <span className="font-bold text-sm text-ink">
                         {friend.name}
                       </span>
-                      <span className="text-xs text-[#5d5c74] font-semibold">
+                      <span className="text-xs text-ink-muted font-semibold">
                         {friend.email}
                       </span>
                     </div>
                   </div>
                   {friend.upiId && (
-                    <span className="text-[10px] font-bold text-[#5d5c74] font-['JetBrains_Mono'] border border-[#eae7e7] px-2 py-0.5 rounded bg-[#fcf9f8]">
+                    <span className="text-[10px] font-bold text-ink-muted font-['JetBrains_Mono'] border border-soft px-2 py-0.5 rounded bg-surface">
                       {friend.upiId}
                     </span>
                   )}

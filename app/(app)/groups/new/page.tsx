@@ -63,10 +63,10 @@ export default function NewGroupPage() {
 
       {/* Header title */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
           Create Ledger
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-ink leading-tight">
           Create a Group
         </h2>
       </div>
@@ -84,10 +84,10 @@ export default function NewGroupPage() {
 
         {/* Emoji selection grid */}
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
             Group Avatar Emoji
           </span>
-          <div className="grid grid-cols-5 gap-3 bg-white border-2 border-[#1c1b1b] rounded-2xl p-4 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
+          <div className="grid grid-cols-5 gap-3 bg-card border-2 border-ink rounded-2xl p-4 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
             {EMOJIS.map((e) => {
               const isSelected = emoji === e;
               return (
@@ -99,7 +99,7 @@ export default function NewGroupPage() {
                     'w-10 h-10 flex items-center justify-center text-xl border-2 rounded-xl transition-all cursor-pointer',
                     isSelected
                       ? 'bg-[#ffdbd0] border-[#aa3000] shadow-[2px_2px_0px_0px_rgba(170,48,0,1)]'
-                      : 'bg-[#fcf9f8] border-[#1c1b1b] hover:bg-[#eae7e7]',
+                      : 'bg-surface border-ink hover:bg-surface-3',
                   ].join(' ')}
                 >
                   {e}
@@ -111,7 +111,7 @@ export default function NewGroupPage() {
 
         {/* Categories Chips */}
         <div className="flex flex-col gap-2">
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
             Category
           </span>
           <div className="flex flex-wrap gap-2">
@@ -123,11 +123,11 @@ export default function NewGroupPage() {
                   type="button"
                   onClick={() => setCategory(cat.id)}
                   className={[
-                    'flex items-center gap-1.5 px-4 py-2 border-2 border-[#1c1b1b] rounded-full font-bold text-sm',
+                    'flex items-center gap-1.5 px-4 py-2 border-2 border-ink rounded-full font-bold text-sm',
                     'transition-all duration-150 cursor-pointer shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
                     isSelected
-                      ? 'bg-[#ffdbd0] text-[#aa3000] border-[#aa3000] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_0px_rgba(170,48,0,1)]'
-                      : 'bg-[#fcf9f8] text-[#1c1b1b] hover:bg-[#eae7e7] active:shadow-none active:translate-x-[2px] active:translate-y-[2px]',
+                      ? 'bg-[#ffdbd0] text-primary-ink border-[#aa3000] translate-x-[-1px] translate-y-[-1px] shadow-[3px_3px_0px_0px_rgba(170,48,0,1)]'
+                      : 'bg-surface text-ink hover:bg-surface-3 active:shadow-none active:translate-x-[2px] active:translate-y-[2px]',
                   ].join(' ')}
                 >
                   <span>{cat.emoji}</span>

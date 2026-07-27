@@ -92,14 +92,14 @@ function CompleteProfileContent() {
       {/* Heading */}
       <div className="mb-8 text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-[#aa3000]/10 border-2 border-[#aa3000] rounded-full mb-4">
-          <span className="material-symbols-outlined text-[32px] text-[#aa3000]">
+          <span className="material-symbols-outlined text-[32px] text-primary-ink">
             waving_hand
           </span>
         </div>
-        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] mb-2">
+        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-ink mb-2">
           One last thing
         </h1>
-        <p className="text-[#5d5c74] font-['DM_Sans']">
+        <p className="text-ink-muted font-['DM_Sans']">
           {user?.email
             ? `Signed in as ${user.email}`
             : 'Add your UPI ID so friends can pay you back'}
@@ -108,11 +108,11 @@ function CompleteProfileContent() {
 
       {/* General error */}
       {errors.general && (
-        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-[#ba1a1a] rounded-lg flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#ba1a1a] text-[20px]">
+        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-danger rounded-lg flex items-center gap-2">
+          <span className="material-symbols-outlined text-danger text-[20px]">
             error
           </span>
-          <p className="text-sm text-[#ba1a1a] font-['DM_Sans']">{errors.general}</p>
+          <p className="text-sm text-danger font-['DM_Sans']">{errors.general}</p>
         </div>
       )}
 
@@ -153,7 +153,7 @@ function CompleteProfileContent() {
       </div>
 
       {/* Why UPI info card */}
-      <div className="bg-[#FFF3CD] border-2 border-[#1c1b1b] rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] rotate-[-1deg]">
+      <div className="bg-[#FFF3CD] border-2 border-ink rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] rotate-[-1deg]">
         <div className="flex items-start gap-3">
           <span className="material-symbols-outlined text-[#856404] text-[24px] mt-0.5">
             info

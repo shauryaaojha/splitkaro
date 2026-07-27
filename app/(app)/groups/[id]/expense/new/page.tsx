@@ -100,28 +100,28 @@ export default function AddExpensePage() {
 
       {/* Header title */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
           New Transaction
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-ink leading-tight">
           Record Shared Bill
         </h2>
       </div>
 
       {error && (
-        <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-3 rounded-lg font-bold font-['Space_Grotesk'] text-sm">
+        <div className="border-2 border-danger bg-danger-soft text-danger p-3 rounded-lg font-bold font-['Space_Grotesk'] text-sm">
           {error}
         </div>
       )}
 
       {loadingGroup ? (
         <div className="flex flex-col gap-4">
-          <Skeleton className="w-full h-32 rounded-2xl border-2 border-[#1c1b1b]" />
-          <Skeleton className="w-full h-12 rounded-lg border-2 border-[#1c1b1b]" />
-          <Skeleton className="w-full h-48 rounded-2xl border-2 border-[#1c1b1b]" />
+          <Skeleton className="w-full h-32 rounded-2xl border-2 border-ink" />
+          <Skeleton className="w-full h-12 rounded-lg border-2 border-ink" />
+          <Skeleton className="w-full h-48 rounded-2xl border-2 border-ink" />
         </div>
       ) : groupError || !group ? (
-        <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-4 rounded-xl font-bold font-['Space_Grotesk'] text-sm text-center">
+        <div className="border-2 border-danger bg-danger-soft text-danger p-4 rounded-xl font-bold font-['Space_Grotesk'] text-sm text-center">
           Failed to load group members. Please go back.
         </div>
       ) : (

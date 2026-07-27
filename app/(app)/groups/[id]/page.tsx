@@ -61,19 +61,11 @@ export default function GroupDetailPage() {
   const { group, isLoading: loadingGroup, error: groupError, mutate: mutateGroup } = useGroup(groupId);
   const { expenses, isLoading: loadingExpenses, error: expensesError, mutate: mutateExpenses } = useExpenses(groupId);
 
+  // Fetched on load, not just on the Settle tab: the hero badge, the Balances
+  // tab and the per-member amounts all read from it.
   const { data: transactions, isLoading: loadingSettle } = useSWR<SimplifiedTransaction[]>(
-    groupId && activeTab === 'settle' ? `/api/groups/${groupId}/settle` : null,
+    groupId ? `/api/groups/${groupId}/settle` : null,
     settleFetcher,
-    { revalidateOnFocus: true }
-  );
-
-  const { data: balanceMatrix, isLoading: loadingBalances } = useSWR(
-    groupId && activeTab === 'balances' ? `/api/groups/${groupId}/balances` : null,
-    async (url) => {
-      const res = await fetch(url);
-      const json = await res.json();
-      return json.data;
-    },
     { revalidateOnFocus: true }
   );
 
@@ -312,11 +304,14 @@ export default function GroupDetailPage() {
         {/* Balances Tab */}
         {activeTab === 'balances' && (
           <div className="flex flex-col gap-4">
-            {loadingBalances ? (
+            {loadingSettle ? (
               <Skeleton className="w-full h-64 rounded-2xl" />
-            ) : balanceMatrix ? (
-              <BalanceMatrix balances={balanceMatrix} />
-            ) : null}
+            ) : (
+              <BalanceMatrix
+                transactions={myTransactionList}
+                currentUserId={myMemberId}
+              />
+            )}
           </div>
         )}
 
@@ -365,7 +360,7 @@ export default function GroupDetailPage() {
                         </div>
                       </div>
                       <div className="flex flex-col items-end gap-1">
-                        <span className="text-lg font-['Syne'] font-extrabold" style={{ color: 'var(--t-primary)' }}>
+                        <span className="text-lg font-['Syne'] font-extrabold" style={{ color: 'var(--t-primary-on-surface)' }}>
                           ₹{t.amount.toFixed(2)}
                         </span>
                         {isOwedByMe && (

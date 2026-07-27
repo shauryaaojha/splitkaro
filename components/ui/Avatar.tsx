@@ -55,12 +55,15 @@ export default function Avatar({
   return (
     <div
       className={[
-        'rounded-full border-2 border-[#1c1b1b] flex items-center justify-center overflow-hidden shrink-0',
+        'rounded-full border-2 flex items-center justify-center overflow-hidden shrink-0',
         "font-bold font-['Space_Grotesk']",
         sizeClasses[size],
         className,
       ].join(' ')}
-      style={!src ? { backgroundColor: bgColor, color: '#ffffff' } : undefined}
+      style={{
+        borderColor: 'var(--t-border)',
+        ...(!src ? { backgroundColor: bgColor, color: '#ffffff' } : {}),
+      }}
       title={name}
     >
       {src ? (

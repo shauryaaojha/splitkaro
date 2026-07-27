@@ -10,12 +10,13 @@ interface BadgeProps {
   className?: string;
 }
 
-const variantClasses: Record<BadgeVariant, string> = {
-  primary: 'bg-[#aa3000] text-white',
-  secondary: 'bg-[#5d5c74] text-white',
-  success: 'bg-[#1A893D] text-[#E8F8EE]',
-  error: 'bg-[#ffdad6] text-[#ba1a1a]',
-  neutral: 'bg-[#eae7e7] text-[#1c1b1b]',
+// Theme variables so badges stay legible in both light and dark mode
+const variantStyles: Record<BadgeVariant, React.CSSProperties> = {
+  primary: { background: 'var(--t-primary)', color: '#fff' },
+  secondary: { background: 'var(--t-accent)', color: '#fff' },
+  success: { background: 'var(--t-success-bg)', color: 'var(--t-success)' },
+  error: { background: 'var(--t-danger-bg)', color: 'var(--t-danger)' },
+  neutral: { background: 'var(--t-surface-3)', color: 'var(--t-on-surface)' },
 };
 
 export default function Badge({
@@ -27,9 +28,9 @@ export default function Badge({
     <span
       className={[
         "inline-flex items-center rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']",
-        variantClasses[variant],
         className,
       ].join(' ')}
+      style={variantStyles[variant]}
     >
       {children}
     </span>

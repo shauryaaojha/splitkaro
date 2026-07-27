@@ -48,10 +48,10 @@ export default function ActivityPage() {
     if (list.length === 0) return null;
     return (
       <div className="flex flex-col gap-3">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037] px-1">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted px-1">
           {title}
         </span>
-        <Card className="flex flex-col p-2 bg-white border-2 border-[#1c1b1b] divide-y divide-[#eae7e7]">
+        <Card className="flex flex-col p-2 bg-white border-2 border-ink divide-y divide-soft">
           {list.map((item) => (
             <ActivityItem key={item._id} activity={item} />
           ))}
@@ -67,13 +67,13 @@ export default function ActivityPage() {
 
       {/* Header */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
           Timeline
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-ink leading-tight">
           Recent Activities
         </h2>
-        <p className="text-sm font-semibold text-[#5d5c74] mt-0.5 leading-snug">
+        <p className="text-sm font-semibold text-ink-muted mt-0.5 leading-snug">
           Keep track of added expenses, settlements, and invites.
         </p>
       </div>
@@ -85,18 +85,18 @@ export default function ActivityPage() {
           <Skeleton className="w-full h-16 rounded-xl" />
         </div>
       ) : error ? (
-        <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-4 rounded-xl font-bold font-['Space_Grotesk'] text-sm text-center">
+        <div className="border-2 border-danger bg-danger-soft text-danger p-4 rounded-xl font-bold font-['Space_Grotesk'] text-sm text-center">
           Failed to load activities.
         </div>
       ) : notifications.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 px-4 bg-white border-2 border-[#1c1b1b] rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-center text-[#5d5c74]">
-          <span className="material-symbols-outlined text-5xl mb-4 text-[#5d5c74]/40">
+        <div className="flex flex-col items-center justify-center py-20 px-4 bg-card border-2 border-ink rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-center text-ink-muted">
+          <span className="material-symbols-outlined text-5xl mb-4 text-ink-muted/40">
             notifications_off
           </span>
-          <span className="text-base font-bold font-['Space_Grotesk'] text-[#1c1b1b]">
+          <span className="text-base font-bold font-['Space_Grotesk'] text-ink">
             Your logs are clean
           </span>
-          <span className="text-xs text-[#5d5c74]/70 mt-1 max-w-[220px]">
+          <span className="text-xs text-ink-muted/70 mt-1 max-w-[220px]">
             Activity updates about expense shares and peer requests will compile here!
           </span>
         </div>

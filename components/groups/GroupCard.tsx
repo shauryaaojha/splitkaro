@@ -31,16 +31,16 @@ export default function GroupCard({ group }: GroupCardProps) {
 
   const balanceColor =
     group.balance > 0
-      ? 'text-[#1A893D]'
+      ? 'var(--t-success)'
       : group.balance < 0
-        ? 'text-[#ba1a1a]'
-        : 'text-[#5d5c74]';
+        ? 'var(--t-danger)'
+        : 'var(--t-on-surface-muted)';
 
   const balanceText =
     group.balance > 0
-      ? `You're owed ${formatCurrency(group.balance)}`
+      ? `You'll get back ${formatCurrency(group.balance)}`
       : group.balance < 0
-        ? `You owe ${formatCurrency(group.balance)}`
+        ? `You have to pay ${formatCurrency(group.balance)}`
         : 'All settled up';
 
   return (
@@ -52,11 +52,21 @@ export default function GroupCard({ group }: GroupCardProps) {
       {/* Header row */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-xl border-2 border-[#1c1b1b] bg-[#fcf9f8] flex items-center justify-center text-xl shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]">
+          <div
+            className="w-11 h-11 rounded-xl border-2 flex items-center justify-center text-xl"
+            style={{
+              background: 'var(--t-surface)',
+              borderColor: 'var(--t-border)',
+              boxShadow: '1px 1px 0px 0px var(--t-shadow)',
+            }}
+          >
             {group.emoji}
           </div>
           <div>
-            <h3 className="font-bold font-['Space_Grotesk'] text-[#1c1b1b] text-base leading-tight">
+            <h3
+              className="font-bold font-['Space_Grotesk'] text-base leading-tight"
+              style={{ color: 'var(--t-on-surface)' }}
+            >
               {group.name}
             </h3>
             <Badge variant="neutral" className="mt-1">
@@ -67,9 +77,15 @@ export default function GroupCard({ group }: GroupCardProps) {
       </div>
 
       {/* Bottom row */}
-      <div className="flex items-center justify-between pt-1 border-t border-[#eae7e7]">
+      <div
+        className="flex items-center justify-between pt-1 border-t"
+        style={{ borderColor: 'var(--t-surface-3)' }}
+      >
         <MemberAvatarStack members={group.members} max={3} />
-        <span className={`text-sm font-bold font-['Space_Grotesk'] ${balanceColor}`}>
+        <span
+          className="text-sm font-bold font-['Space_Grotesk']"
+          style={{ color: balanceColor }}
+        >
           {balanceText}
         </span>
       </div>

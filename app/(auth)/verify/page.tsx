@@ -101,11 +101,11 @@ function VerifyContent() {
     return (
       <div className="w-full max-w-[600px] mx-auto px-4 text-center">
         <div className="brutalist-card p-8">
-          <span className="material-symbols-outlined text-[48px] text-[#ba1a1a] mb-4">error</span>
-          <h2 className="text-xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] mb-2">
+          <span className="material-symbols-outlined text-[48px] text-danger mb-4">error</span>
+          <h2 className="text-xl font-bold font-['Space_Grotesk'] text-ink mb-2">
             No Email Provided
           </h2>
-          <p className="text-[#5d5c74] font-['DM_Sans'] mb-6">
+          <p className="text-ink-muted font-['DM_Sans'] mb-6">
             Please start from the login page.
           </p>
           <Link href="/login">
@@ -122,12 +122,12 @@ function VerifyContent() {
       <div className="flex items-center justify-between mb-8">
         <Link
           href="/login"
-          className="inline-flex items-center gap-1 text-[#5d5c74] font-['DM_Sans'] text-sm hover:text-[#1c1b1b] transition-colors"
+          className="inline-flex items-center gap-1 text-ink-muted font-['DM_Sans'] text-sm hover:text-ink transition-colors"
         >
           <span className="material-symbols-outlined text-[20px]">arrow_back</span>
           Back
         </Link>
-        <div className="w-10 h-10 bg-[#aa3000] border-2 border-[#1c1b1b] rounded-xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center">
+        <div className="w-10 h-10 bg-[#aa3000] border-2 border-ink rounded-xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] flex items-center justify-center">
           <span className="text-white text-sm font-bold font-['Syne']">S</span>
         </div>
       </div>
@@ -135,22 +135,22 @@ function VerifyContent() {
       {/* Heading */}
       <div className="mb-8 text-center">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-[#aa3000]/10 border-2 border-[#aa3000] rounded-full mb-4">
-          <span className="material-symbols-outlined text-[32px] text-[#aa3000]">mark_email_read</span>
+          <span className="material-symbols-outlined text-[32px] text-primary-ink">mark_email_read</span>
         </div>
-        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] mb-2">
+        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-ink mb-2">
           Check your inbox
         </h1>
-        <p className="text-[#5d5c74] font-['DM_Sans']">
+        <p className="text-ink-muted font-['DM_Sans']">
           We sent a 6-digit code to
         </p>
-        <p className="font-bold font-['DM_Sans'] text-[#1c1b1b] mt-1">{email}</p>
+        <p className="font-bold font-['DM_Sans'] text-ink mt-1">{email}</p>
       </div>
 
       {/* Error block for verification flow errors */}
       {error && !error.includes('expired') && (
-        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-[#ba1a1a] rounded-lg flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#ba1a1a] text-[20px]">error</span>
-          <p className="text-sm text-[#ba1a1a] font-['DM_Sans']">{error}</p>
+        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-danger rounded-lg flex items-center gap-2">
+          <span className="material-symbols-outlined text-danger text-[20px]">error</span>
+          <p className="text-sm text-danger font-['DM_Sans']">{error}</p>
         </div>
       )}
 
@@ -171,9 +171,9 @@ function VerifyContent() {
         {/* Resend countdown */}
         <div className="text-center mb-6">
           {countdown > 0 ? (
-            <p className="text-sm text-[#5d5c74] font-['DM_Sans']">
+            <p className="text-sm text-ink-muted font-['DM_Sans']">
               Resend code in{' '}
-              <span className="font-bold font-['JetBrains_Mono'] text-[#aa3000]">
+              <span className="font-bold font-['JetBrains_Mono'] text-primary-ink">
                 {countdown}s
               </span>
             </p>
@@ -182,7 +182,7 @@ function VerifyContent() {
               type="button"
               onClick={handleResend}
               disabled={resending}
-              className="text-sm text-[#aa3000] font-bold font-['DM_Sans'] hover:underline cursor-pointer disabled:opacity-50"
+              className="text-sm text-primary-ink font-bold font-['DM_Sans'] hover:underline cursor-pointer disabled:opacity-50"
             >
               {resending ? 'Sending...' : 'Resend Code'}
             </button>
@@ -202,7 +202,7 @@ function VerifyContent() {
       </form>
 
       {/* Security note */}
-      <div className="mt-8 flex items-center justify-center gap-2 text-[#5d5c74]">
+      <div className="mt-8 flex items-center justify-center gap-2 text-ink-muted">
         <span className="material-symbols-outlined text-[18px]">lock</span>
         <p className="text-xs font-['DM_Sans']">Secure verification process</p>
       </div>

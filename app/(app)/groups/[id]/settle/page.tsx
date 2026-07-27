@@ -97,8 +97,8 @@ export default function SettleUpPage() {
     return (
       <div className="flex flex-col gap-6 pt-16 min-h-screen">
         <TopBar showBack />
-        <Skeleton className="w-full h-40 rounded-2xl border-2 border-[#1c1b1b]" />
-        <Skeleton className="w-full h-64 rounded-2xl border-2 border-[#1c1b1b]" />
+        <Skeleton className="w-full h-40 rounded-2xl" />
+        <Skeleton className="w-full h-64 rounded-2xl" />
       </div>
     );
   }
@@ -107,7 +107,14 @@ export default function SettleUpPage() {
     return (
       <div className="flex flex-col gap-6 pt-16 min-h-screen">
         <TopBar showBack />
-        <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-4 rounded-xl font-bold font-['Space_Grotesk'] text-sm text-center">
+        <div
+          className="p-4 rounded-xl font-bold font-['Space_Grotesk'] text-sm text-center"
+          style={{
+            border: '2px solid var(--t-danger)',
+            background: 'var(--t-danger-bg)',
+            color: 'var(--t-danger)',
+          }}
+        >
           Invalid settlement transaction parameters.
         </div>
       </div>
@@ -115,18 +122,24 @@ export default function SettleUpPage() {
   }
 
   return (
-    <div className="flex flex-col gap-6 pt-16 min-h-screen pb-12">
+    <div
+      className="flex flex-col gap-6 pt-16 min-h-screen pb-12"
+      style={{ background: 'var(--t-surface)' }}
+    >
       {/* TopBar */}
       <TopBar title="Settle Up" showBack />
 
       <div className="flex justify-center items-center">
-        <h1 className="font-['Space_Grotesk'] text-[#1c1b1b] text-xl font-bold uppercase tracking-wider">
+        <h1
+          className="font-['Space_Grotesk'] text-xl font-bold uppercase tracking-wider"
+          style={{ color: 'var(--t-on-surface)' }}
+        >
           Settle Balance
         </h1>
       </div>
 
       {/* Peer Settlement Card */}
-      <Card className="flex flex-col items-center gap-6 bg-white border-2 border-[#1c1b1b] p-6 relative overflow-hidden">
+      <Card className="flex flex-col items-center gap-6 p-6 relative overflow-hidden">
         {/* Avatars row */}
         <div className="flex items-center justify-between w-full max-w-[240px] relative z-10">
           <Avatar
@@ -135,8 +148,16 @@ export default function SettleUpPage() {
             size="lg"
           />
           <div className="flex flex-col items-center justify-center">
-            <div className="h-0.5 w-16 bg-[#1c1b1b]" />
-            <span className="material-symbols-outlined text-[#1c1b1b] bg-white border-2 border-[#1c1b1b] rounded-full p-1 -mt-3.5 shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]">
+            <div className="h-0.5 w-16" style={{ background: 'var(--t-border)' }} />
+            <span
+              className="material-symbols-outlined border-2 rounded-full p-1 -mt-3.5"
+              style={{
+                color: 'var(--t-on-surface)',
+                background: 'var(--t-card-bg)',
+                borderColor: 'var(--t-border)',
+                boxShadow: '1px 1px 0px 0px var(--t-shadow)',
+              }}
+            >
               arrow_forward
             </span>
           </div>
@@ -149,10 +170,16 @@ export default function SettleUpPage() {
 
         {/* Text Details */}
         <div className="text-center relative z-10">
-          <p className="font-bold text-sm text-[#5d5c74] font-['Space_Grotesk'] uppercase tracking-wider mb-1">
+          <p
+            className="font-bold text-sm font-['Space_Grotesk'] uppercase tracking-wider mb-1"
+            style={{ color: 'var(--t-on-surface-muted)' }}
+          >
             {payer.name} owes {payee.name}
           </p>
-          <p className="text-4xl font-['Syne'] font-extrabold text-[#ba1a1a] select-all">
+          <p
+            className="text-4xl font-['Syne'] font-extrabold select-all"
+            style={{ color: 'var(--t-danger)' }}
+          >
             ₹{amount.toFixed(2)}
           </p>
         </div>
@@ -166,7 +193,10 @@ export default function SettleUpPage() {
           amount={amount}
         />
 
-        <p className="text-xs font-['DM_Sans'] text-[#5d5c74] text-center px-6">
+        <p
+          className="text-xs font-['DM_Sans'] text-center px-6"
+          style={{ color: 'var(--t-on-surface-muted)' }}
+        >
           Open any UPI app on your phone and scan this code to pay {payee.name}.
         </p>
 

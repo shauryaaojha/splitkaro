@@ -50,13 +50,22 @@ export default function GroupsPage() {
 
       {/* Header and Subtext */}
       <div className="flex flex-col">
-        <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5c4037]">
+        <span
+          className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk']"
+          style={{ color: 'var(--t-on-surface-muted)' }}
+        >
           Shared Ledgers
         </span>
-        <h2 className="text-2xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] leading-tight">
+        <h2
+          className="text-2xl font-bold font-['Space_Grotesk'] leading-tight"
+          style={{ color: 'var(--t-on-surface)' }}
+        >
           Groups
         </h2>
-        <p className="text-sm font-semibold text-[#5d5c74] mt-0.5 leading-snug">
+        <p
+          className="text-sm font-semibold mt-0.5 leading-snug"
+          style={{ color: 'var(--t-on-surface-muted)' }}
+        >
           Track and settle expenses with friends and roommates.
         </p>
       </div>
@@ -65,23 +74,44 @@ export default function GroupsPage() {
       <div className="flex flex-col gap-4">
         {isLoading ? (
           <div className="flex flex-col gap-4">
-            <Skeleton className="w-full h-28 rounded-2xl border-2 border-[#1c1b1b]" />
-            <Skeleton className="w-full h-28 rounded-2xl border-2 border-[#1c1b1b]" />
-            <Skeleton className="w-full h-28 rounded-2xl border-2 border-[#1c1b1b]" />
+            <Skeleton className="w-full h-28 rounded-2xl" />
+            <Skeleton className="w-full h-28 rounded-2xl" />
+            <Skeleton className="w-full h-28 rounded-2xl" />
           </div>
         ) : error ? (
-          <div className="border-2 border-[#ba1a1a] bg-[#ffdad6] text-[#ba1a1a] p-4 rounded-2xl font-bold font-['Space_Grotesk'] text-sm text-center">
+          <div
+            className="p-4 rounded-2xl font-bold font-['Space_Grotesk'] text-sm text-center"
+            style={{
+              border: '2px solid var(--t-danger)',
+              background: 'var(--t-danger-bg)',
+              color: 'var(--t-danger)',
+            }}
+          >
             Failed to load groups. Please try again.
           </div>
         ) : !groups || groups.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-16 px-4 bg-white border-2 border-[#1c1b1b] rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] text-center text-[#5d5c74]">
-            <span className="material-symbols-outlined text-5xl mb-4 text-[#5d5c74]/40">
+          <div
+            className="flex flex-col items-center justify-center py-16 px-4 rounded-2xl text-center"
+            style={{
+              background: 'var(--t-card-bg)',
+              border: '2px solid var(--t-border)',
+              boxShadow: '2px 2px 0px 0px var(--t-shadow)',
+              color: 'var(--t-on-surface-muted)',
+            }}
+          >
+            <span
+              className="material-symbols-outlined text-5xl mb-4"
+              style={{ color: 'var(--t-on-surface-muted)', opacity: 0.4 }}
+            >
               group_off
             </span>
-            <span className="text-base font-bold font-['Space_Grotesk'] text-[#1c1b1b]">
+            <span
+              className="text-base font-bold font-['Space_Grotesk']"
+              style={{ color: 'var(--t-on-surface)' }}
+            >
               No active groups
             </span>
-            <span className="text-xs text-[#5d5c74]/70 mt-1 max-w-[240px]">
+            <span className="text-xs mt-1 max-w-[240px]" style={{ opacity: 0.7 }}>
               Create a group to start sharing expenses and splitting bills effortlessly!
             </span>
             <Link href="/groups/new" className="mt-6">
@@ -107,7 +137,12 @@ export default function GroupsPage() {
         >
           <button
             type="button"
-            className="w-14 h-14 bg-[#aa3000] text-white rounded-full border-2 border-[#1c1b1b] shadow-[3px_3px_0px_0px_rgba(26,26,26,1)] hover:bg-[#c45a2d] active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center cursor-pointer font-bold"
+            className="w-14 h-14 text-white rounded-full border-2 active:translate-x-[2px] active:translate-y-[2px] active:shadow-none transition-all flex items-center justify-center cursor-pointer font-bold"
+            style={{
+              background: 'var(--t-primary)',
+              borderColor: 'var(--t-border)',
+              boxShadow: '3px 3px 0px 0px var(--t-shadow)',
+            }}
             title="Create Group"
           >
             <span className="material-symbols-outlined text-[28px] font-extrabold">

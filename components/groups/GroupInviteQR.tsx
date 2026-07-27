@@ -68,12 +68,12 @@ export default function GroupInviteQR({ inviteToken, groupName }: GroupInviteQRP
 
   return (
     <Card className="flex flex-col items-center gap-4">
-      <h3 className="font-bold font-['Space_Grotesk'] text-[#1c1b1b] text-base">
+      <h3 className="font-bold font-['Space_Grotesk'] text-ink text-base">
         Invite to {groupName}
       </h3>
 
       {/* QR Code */}
-      <div className="border-2 border-[#1c1b1b] rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
+      <div className="border-2 border-ink rounded-xl overflow-hidden shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]">
         {qrDataUrl ? (
           <img
             src={qrDataUrl}
@@ -87,7 +87,7 @@ export default function GroupInviteQR({ inviteToken, groupName }: GroupInviteQRP
       </div>
 
       {/* Invite URL display */}
-      <div className="w-full bg-[#fcf9f8] border-2 border-[#1c1b1b] rounded-lg px-3 py-2 text-xs font-['JetBrains_Mono'] text-[#5d5c74] truncate text-center">
+      <div className="w-full bg-surface border-2 border-ink rounded-lg px-3 py-2 text-xs font-['JetBrains_Mono'] text-ink-muted truncate text-center">
         {inviteUrl}
       </div>
 

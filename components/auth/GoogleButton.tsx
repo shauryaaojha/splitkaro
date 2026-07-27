@@ -40,6 +40,7 @@ export default function GoogleButton({
       disabled={loading}
       className={[
         "inline-flex w-full h-14 items-center justify-center gap-3 rounded-full font-bold font-['Space_Grotesk'] tracking-wide text-base",
+        // Fixed dark-on-white: Google's button keeps its own colours in any theme
         'bg-white text-[#1c1b1b] border-2 border-[#1c1b1b]',
         'shadow-[2px_2px_0px_0px_rgba(26,26,26,1)]',
         'transition-all duration-100',

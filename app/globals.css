@@ -289,6 +289,44 @@
   --t-border: #ffe8d0;
 }
 
+/* Readable-on-surface version of the primary ink. `--t-primary` stays as-is
+   because it is mostly used as a fill behind white text, where a lighter
+   shade would hurt contrast instead of helping it.
+
+   Declared before the dark-mode block below: `:root` and `[data-dark="true"]`
+   have equal specificity, so source order decides the winner. */
+:root {
+  --t-primary-on-surface: var(--t-primary);
+}
+
+/* ── Dark mode: readable accent text ────────────────────────────────────
+   The light-mode success/danger/primary inks are deep, saturated colours that
+   fall below readable contrast on a near-black surface, so text using them
+   turns muddy. These are brightened variants for dark backgrounds only. */
+[data-dark="true"] {
+  --t-success: #5ddb8a;
+  --t-danger: #ff8a80;
+  --t-primary-on-surface: #ff8a5c;
+}
+
+/* ── Always-light surfaces ──────────────────────────────────────────────
+   Pre-login screens (auth, invite landing) keep a cream background even when
+   dark mode is on. Re-declaring the theme variables here means shared
+   components using them stay legible inside these screens. */
+.sk-light-surface {
+  --t-surface: #f5f0e8;
+  --t-surface-2: #f1edec;
+  --t-surface-3: #ebe7e6;
+  --t-card-bg: #ffffff;
+  --t-on-surface: #1c1b1b;
+  --t-on-surface-muted: #5d5c74;
+  --t-border: #1c1b1b;
+  --t-shadow: rgba(28, 27, 27, 1);
+  --t-success: #1b6d30;
+  --t-danger: #ba1a1a;
+  --t-primary-on-surface: var(--t-primary);
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════
    Base Styles
    ═══════════════════════════════════════════════════════════════════════════ */
@@ -331,6 +369,32 @@ body {
 .brutalist-shadow-hover:active {
   box-shadow: 0px 0px 0px var(--t-shadow);
   transform: translate(2px, 2px);
+}
+
+/* ── Theme-backed colour utilities ──────────────────────────────────────
+   Use these instead of hardcoded hex values so text and surfaces follow the
+   active theme and dark mode. Inside `.sk-light-surface` they resolve to the
+   light palette, which is what keeps the pre-login screens cream. */
+.text-ink { color: var(--t-on-surface); }
+.text-ink-muted { color: var(--t-on-surface-muted); }
+.text-danger { color: var(--t-danger); }
+.text-success { color: var(--t-success); }
+.text-primary-ink { color: var(--t-primary-on-surface); }
+.bg-card { background-color: var(--t-card-bg); }
+.bg-surface { background-color: var(--t-surface); }
+.bg-surface-3 { background-color: var(--t-surface-3); }
+.bg-danger-soft { background-color: var(--t-danger-bg); }
+.border-ink { border-color: var(--t-border); }
+.border-danger { border-color: var(--t-danger); }
+.border-soft { border-color: var(--t-surface-3); }
+.divide-soft > * + * { border-color: var(--t-surface-3); }
+
+.brutalist-card {
+  background: var(--t-card-bg);
+  color: var(--t-on-surface);
+  border: 2px solid var(--t-border);
+  border-radius: 1rem;
+  box-shadow: 2px 2px 0px 0px var(--t-shadow);
 }
 
 .brutalist-input {

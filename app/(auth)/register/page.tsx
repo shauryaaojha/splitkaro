@@ -83,7 +83,7 @@ export default function RegisterPage() {
       {/* Back button */}
       <Link
         href="/login"
-        className="inline-flex items-center gap-1 text-[#5d5c74] mb-6 font-['DM_Sans'] text-sm hover:text-[#1c1b1b] transition-colors"
+        className="inline-flex items-center gap-1 text-ink-muted mb-6 font-['DM_Sans'] text-sm hover:text-ink transition-colors"
       >
         <span className="material-symbols-outlined text-[20px]">arrow_back</span>
         Back to Login
@@ -91,26 +91,26 @@ export default function RegisterPage() {
 
       {/* Heading */}
       <div className="mb-8">
-        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-[#1c1b1b] mb-2">
+        <h1 className="text-3xl font-bold font-['Space_Grotesk'] text-ink mb-2">
           Create Account
         </h1>
-        <p className="text-[#5d5c74] font-['DM_Sans']">
+        <p className="text-ink-muted font-['DM_Sans']">
           Join SplitKaro to start splitting expenses with friends
         </p>
       </div>
 
       {/* General error */}
       {errors.general && (
-        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-[#ba1a1a] rounded-lg flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#ba1a1a] text-[20px]">error</span>
-          <p className="text-sm text-[#ba1a1a] font-['DM_Sans']">{errors.general}</p>
+        <div className="mb-4 p-3 bg-[#ba1a1a]/10 border-2 border-danger rounded-lg flex items-center gap-2">
+          <span className="material-symbols-outlined text-danger text-[20px]">error</span>
+          <p className="text-sm text-danger font-['DM_Sans']">{errors.general}</p>
         </div>
       )}
 
       {/* Google signup — fastest path, so it leads */}
       <div className="brutalist-card p-6 mb-6">
         <GoogleButton label="Sign up with Google" />
-        <p className="text-xs text-[#5d5c74] font-['DM_Sans'] text-center mt-3">
+        <p className="text-xs text-ink-muted font-['DM_Sans'] text-center mt-3">
           Already signed up with this email? We&apos;ll reconnect you to your
           existing account.
         </p>
@@ -118,7 +118,7 @@ export default function RegisterPage() {
         {/* Divider */}
         <div className="flex items-center gap-3 mt-5">
           <span className="flex-1 h-[2px] bg-[#1c1b1b]/15" />
-          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5d5c74]">
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-ink-muted">
             or sign up with email
           </span>
           <span className="flex-1 h-[2px] bg-[#1c1b1b]/15" />
@@ -172,7 +172,7 @@ export default function RegisterPage() {
       </div>
 
       {/* Why UPI info card */}
-      <div className="bg-[#FFF3CD] border-2 border-[#1c1b1b] rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] rotate-[-1deg] mb-8">
+      <div className="bg-[#FFF3CD] border-2 border-ink rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] rotate-[-1deg] mb-8">
         <div className="flex items-start gap-3">
           <span className="material-symbols-outlined text-[#856404] text-[24px] mt-0.5">info</span>
           <div>
@@ -188,9 +188,9 @@ export default function RegisterPage() {
       </div>
 
       {/* Footer link */}
-      <p className="text-center text-sm text-[#5d5c74] font-['DM_Sans']">
+      <p className="text-center text-sm text-ink-muted font-['DM_Sans']">
         Already have an account?{' '}
-        <Link href="/login" className="text-[#aa3000] font-bold hover:underline">
+        <Link href="/login" className="text-primary-ink font-bold hover:underline">
           Log In
         </Link>
       </p>
