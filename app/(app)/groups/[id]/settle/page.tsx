@@ -10,7 +10,6 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Skeleton from '@/components/ui/Skeleton';
 import UpiQRCode from '@/components/settle/UpiQRCode';
-import UpiDeepLinks from '@/components/settle/UpiDeepLinks';
 
 interface PopulatedMember {
   userId: string | {
@@ -39,7 +38,6 @@ export default function SettleUpPage() {
 
   const { group, isLoading: loadingGroup } = useGroup(groupId);
   const [saving, setSaving] = useState(false);
-  const [showQR, setShowQR] = useState(false);
 
   const getMemberDetails = (member: PopulatedMember) => {
     if (typeof member.userId === 'string') {
@@ -160,53 +158,17 @@ export default function SettleUpPage() {
         </div>
       </Card>
 
-      {/* Settle Actions (Direct Mobile Links or Scannable QR Code) */}
+      {/* Settle Actions — scan to pay, or record a payment made elsewhere */}
       <div className="flex flex-col gap-4">
-        {showQR ? (
-          <div className="flex flex-col gap-4">
-            <UpiQRCode
-              payeeUpiId={payee.upiId || 'payee@upi'}
-              payeeName={payee.name || 'Payee'}
-              amount={amount}
-            />
-            <button
-              type="button"
-              onClick={() => setShowQR(false)}
-              className="text-xs font-bold font-['Space_Grotesk'] text-[#aa3000] underline text-center cursor-pointer"
-            >
-              Show Deep Links instead
-            </button>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-4">
-            {/* Launch App Deep Links */}
-            <UpiDeepLinks
-              payeeUpiId={payee.upiId || 'payee@upi'}
-              payeeName={payee.name || 'Payee'}
-              amount={amount}
-            />
+        <UpiQRCode
+          payeeUpiId={payee.upiId || 'payee@upi'}
+          payeeName={payee.name || 'Payee'}
+          amount={amount}
+        />
 
-            {/* Switch to scan QR */}
-            <div className="flex items-center gap-4 my-2 px-4">
-              <div className="h-0.5 flex-1 bg-[#5d5c74]/20"></div>
-              <span className="font-bold text-xs font-['Space_Grotesk'] text-[#5d5c74] uppercase tracking-wider">
-                OR
-              </span>
-              <div className="h-0.5 flex-1 bg-[#5d5c74]/20"></div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() => setShowQR(true)}
-              className="flex items-center justify-center gap-2 p-4 bg-white border-2 border-[#1c1b1b] rounded-2xl shadow-[2px_2px_0px_0px_rgba(26,26,26,1)] hover:bg-[#eae7e7]/30 transition-colors font-bold text-sm font-['Space_Grotesk'] text-[#1c1b1b] cursor-pointer active:translate-x-[1px] active:translate-y-[1px] active:shadow-[1px_1px_0px_0px_rgba(26,26,26,1)]"
-            >
-              <span className="material-symbols-outlined text-[24px]">
-                qr_code_scanner
-              </span>
-              Scan QR Code
-            </button>
-          </div>
-        )}
+        <p className="text-xs font-['DM_Sans'] text-[#5d5c74] text-center px-6">
+          Open any UPI app on your phone and scan this code to pay {payee.name}.
+        </p>
 
         {/* Mark paid manually ghost button */}
         <div className="mt-4 flex justify-center">
