@@ -37,6 +37,10 @@ const UserSchema = new Schema<IUser>(
     avatarUrl: { type: String },
     otp: { type: OtpSchema },
     pendingEmail: { type: String },
+    // Sparse so the unique index only covers accounts that linked Google.
+    googleId: { type: String, unique: true, sparse: true },
+    googleEmail: { type: String, lowercase: true, trim: true },
+    googleLinkedAt: { type: Date },
     friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
     friendRequests: [FriendRequestSchema],
     pushSubscriptions: [

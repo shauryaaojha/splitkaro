@@ -38,4 +38,24 @@ export const smtp = {
 export const emailFrom = env("EMAIL_FROM", `SplitKaro <${smtp.user}>`);
 
 /** Public-facing app URL (no trailing slash) */
-export const appUrl = env("NEXT_PUBLIC_APP_URL", "http://localhost:3000");
+export const appUrl = env("NEXT_PUBLIC_APP_URL", "http://localhost:3000").replace(
+  /\/+$/,
+  ""
+);
+
+/**
+ * Google OAuth credentials.
+ *
+ * Optional: when either value is missing, `isConfigured` is false and the
+ * sign-in routes fail gracefully instead of crashing the whole app at boot.
+ */
+const googleClientId = process.env.GOOGLE_CLIENT_ID ?? "";
+const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
+
+export const google = {
+  clientId: googleClientId,
+  clientSecret: googleClientSecret,
+  /** Must match an authorised redirect URI in the Google Cloud Console */
+  redirectUri: `${appUrl}/api/auth/google/callback`,
+  isConfigured: Boolean(googleClientId && googleClientSecret),
+} as const;

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Button from '@/components/ui/Button';
 import Input from '@/components/ui/Input';
+import GoogleButton from '@/components/auth/GoogleButton';
 
 interface FormErrors {
   name?: string;
@@ -105,6 +106,24 @@ export default function RegisterPage() {
           <p className="text-sm text-[#ba1a1a] font-['DM_Sans']">{errors.general}</p>
         </div>
       )}
+
+      {/* Google signup — fastest path, so it leads */}
+      <div className="brutalist-card p-6 mb-6">
+        <GoogleButton label="Sign up with Google" />
+        <p className="text-xs text-[#5d5c74] font-['DM_Sans'] text-center mt-3">
+          Already signed up with this email? We&apos;ll reconnect you to your
+          existing account.
+        </p>
+
+        {/* Divider */}
+        <div className="flex items-center gap-3 mt-5">
+          <span className="flex-1 h-[2px] bg-[#1c1b1b]/15" />
+          <span className="text-xs font-bold uppercase tracking-wider font-['Space_Grotesk'] text-[#5d5c74]">
+            or sign up with email
+          </span>
+          <span className="flex-1 h-[2px] bg-[#1c1b1b]/15" />
+        </div>
+      </div>
 
       {/* Form Card */}
       <div className="brutalist-card p-6 mb-6">

@@ -31,6 +31,12 @@ export interface IUser extends Document {
   avatarUrl?: string;
   otp?: IOtp;
   pendingEmail?: string;
+  /** Google account ID (`sub`), set once the user links Google sign-in */
+  googleId?: string;
+  /** Address on the Google account, kept only when it differs from `email` */
+  googleEmail?: string;
+  /** When Google sign-in was first linked to this account */
+  googleLinkedAt?: Date;
   friends: Types.ObjectId[];
   friendRequests: IFriendRequest[];
   pushSubscriptions?: IPushSubscription[];
