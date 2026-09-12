@@ -1,36 +1,51 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# SplitKaro
 
-## Getting Started
+A mobile-first PWA for friend groups to track shared expenses, auto-split bills and settle dues directly over **UPI** — no app download needed. Built for India, where UPI is the default payment rail.
 
-First, run the development server:
+Core loop: **Create Group → Add Expense → Auto-Split → Settle via UPI QR / deep link.**
+
+**Stack:** Next.js (App Router) · React · TypeScript · MongoDB / Mongoose · JWT auth · Nodemailer (OTP + invites) · Google OAuth · `qrcode` · zod · SWR
+
+## Features
+
+- **Auth** — email + OTP verification, password login, Google sign-in, profile completion with UPI ID.
+- **Groups** — create, invite by link/email, join via `/join/[token]`, leave, transfer admin.
+- **Expenses** — add/edit/delete per group, split among members, per-group balance view.
+- **Auto Settle** — debt simplification collapses chains (A→B→C ⇒ A→C) into the minimum number of transfers (`lib/settle.ts`).
+- **UPI settlement** — generates a UPI QR / deep link for each due (`/api/upi/qr`); settlements are recorded per group.
+- **Friends** — send/accept friend requests, see balances across groups on the dashboard.
+- **Activity feed & notifications** — in-app notifications with read state, email unsubscribe.
+
+## Run it
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm install
+# .env.local: MONGODB_URI, JWT_SECRET, SMTP_HOST/PORT/USER/PASS, MAIL_FROM,
+#             GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, NEXT_PUBLIC_APP_URL
+npm run dev        # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Routes
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+| Area | Pages |
+| --- | --- |
+| Auth | `/login`, `/register`, `/verify`, `/complete-profile`, `/signup` |
+| App | `/` (dashboard), `/groups`, `/groups/new`, `/groups/[id]`, `/groups/[id]/expense/*`, `/groups/[id]/settle`, `/groups/[id]/invite`, `/friends`, `/activity`, `/profile` |
+| Invite | `/join/[token]` |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+API lives under `app/api/` — `auth/*`, `groups/*` (expenses, balances, settle, settlements, leave, transfer-admin), `friends/*`, `settlements`, `notifications/*`, `invite/email`, `upi/qr`, `dashboard/balances`.
 
-## Learn More
+## Layout
 
-To learn more about Next.js, take a look at the following resources:
+```
+app/(auth)/      login / register / verify / complete-profile
+app/(app)/       dashboard, groups, friends, activity, profile
+app/api/         route handlers
+components/      UI
+hooks/           SWR data hooks
+lib/             auth, db, otp, mail, google, balance, settle, upi
+models/          User, Group, Expense, Settlement, Notification, Unsubscribe
+proxy.ts         route gating
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Product spec: [`../prd.md`](../prd.md).
