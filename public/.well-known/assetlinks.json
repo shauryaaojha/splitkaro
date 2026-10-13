@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.splitkaro.app",
+      "sha256_cert_fingerprints": [
+        "1B:62:22:9C:44:DF:F3:81:55:B3:61:E2:D5:F3:8F:6A:EA:D5:01:C6:78:91:4B:36:28:C4:C4:C9:AE:95:92:D3"
+      ]
+    }
+  }
+]

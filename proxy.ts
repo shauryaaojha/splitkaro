@@ -12,6 +12,8 @@ const PUBLIC_PATHS = [
   "/favicon.ico",
   "/manifest.json",
   "/icons",
+  "/sw.js",
+  "/.well-known",
 ];
 
 export function proxy(request: NextRequest) {
