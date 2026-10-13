@@ -1,5 +1,18 @@
-const CACHE_NAME = "splitkaro-static-v2";
-const STATIC_ASSETS = ["/", "/manifest.json"];
+// v3 drops the old cache, which could hold a redirected "/" that breaks
+// navigation after login ("This site can't be reached").
+const CACHE_NAME = "splitkaro-static-v3";
+// Pages depend on the auth cookie, so only cookie-independent files are precached.
+const STATIC_ASSETS = ["/manifest.json", "/icons/icon-192.png", "/icons/icon-512.png"];
+
+const isStaticAsset = (url) =>
+  url.pathname.startsWith("/_next/static/") ||
+  url.pathname.startsWith("/icons/") ||
+  url.pathname === "/manifest.json";
+
+// Browsers reject redirected responses for navigations, and opaque or error
+// responses are not worth keeping, so only clean 200s go into the cache.
+const isCacheable = (response) =>
+  response.ok && !response.redirected && response.type === "basic";
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
@@ -32,12 +45,20 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  // Pages and RSC payloads always go to the network so auth redirects
+  // (login → OAuth callback → "/") are never answered from a stale cache.
+  if (!isStaticAsset(url)) {
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((cached) => {
       if (cached) return cached;
       return fetch(request).then((response) => {
-        const copy = response.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        if (isCacheable(response)) {
+          const copy = response.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        }
         return response;
       });
     })
