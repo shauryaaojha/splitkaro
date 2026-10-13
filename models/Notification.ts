@@ -1,5 +1,6 @@
 import mongoose, { Schema, model, models } from "mongoose";
 import type { INotification } from "@/types";
+import { pushNotifications } from "@/lib/push";
 
 const NotificationSchema = new Schema<INotification>(
   {
@@ -31,6 +32,20 @@ const NotificationSchema = new Schema<INotification>(
 
 /** Fast lookup for a user's unread notifications */
 NotificationSchema.index({ userId: 1, isRead: 1 });
+
+/** Every new in-app notification is also sent to the user's devices as Web Push. */
+NotificationSchema.pre("save", function () {
+  this.$locals.wasNew = this.isNew;
+});
+
+NotificationSchema.post("save", function (doc) {
+  // Only fresh notifications are pushed, not later re-saves of the same doc.
+  if (doc.$locals.wasNew) pushNotifications([doc]);
+});
+
+NotificationSchema.post("insertMany", function (docs: INotification[]) {
+  pushNotifications(docs);
+});
 
 const Notification =
   (models.Notification as mongoose.Model<INotification>) ??

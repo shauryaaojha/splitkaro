@@ -2,6 +2,47 @@
 
 import React, { useEffect, useState } from 'react';
 
+async function subscribeToWebPush() {
+  try {
+    const registration = await navigator.serviceWorker.ready;
+
+    // Check if already subscribed
+    const existing = await registration.pushManager.getSubscription();
+    if (existing) {
+      await sendSubscriptionToServer(existing);
+      return;
+    }
+
+    // VAPID public key from env
+    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    if (!vapidKey) {
+      console.warn('VAPID public key not configured, skipping push subscription');
+      return;
+    }
+
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as BufferSource,
+    });
+
+    await sendSubscriptionToServer(subscription);
+  } catch (err) {
+    console.error('Push subscription failed:', err);
+  }
+}
+
+async function sendSubscriptionToServer(subscription: PushSubscription) {
+  try {
+    await fetch('/api/notifications/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(subscription),
+    });
+  } catch {
+    // Silent fail - app still works without push
+  }
+}
+
 export default function PushNotificationManager() {
   const [permissionState, setPermissionState] = useState<NotificationPermission | 'unsupported'>('default');
   const [showBanner, setShowBanner] = useState(false);
@@ -22,6 +63,12 @@ export default function PushNotificationManager() {
     Promise.resolve().then(() => {
       if (active) setPermissionState(currentPermission);
     });
+
+    // Permission may have been granted on an earlier visit or under another
+    // account, so re-register this device for whoever is logged in now.
+    if (currentPermission === 'granted') {
+      void subscribeToWebPush();
+    }
 
     // Show banner only if not yet granted and user hasn't dismissed it before
     const wasDismissed = localStorage.getItem('push_banner_dismissed') === 'true';
@@ -57,47 +104,6 @@ export default function PushNotificationManager() {
     setShowBanner(false);
     setDismissed(true);
     localStorage.setItem('push_banner_dismissed', 'true');
-  };
-
-  const subscribeToWebPush = async () => {
-    try {
-      const registration = await navigator.serviceWorker.ready;
-
-      // Check if already subscribed
-      const existing = await registration.pushManager.getSubscription();
-      if (existing) {
-        await sendSubscriptionToServer(existing);
-        return;
-      }
-
-      // VAPID public key from env
-      const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-      if (!vapidKey) {
-        console.warn('VAPID public key not configured, skipping push subscription');
-        return;
-      }
-
-      const subscription = await registration.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidKey) as unknown as BufferSource,
-      });
-
-      await sendSubscriptionToServer(subscription);
-    } catch (err) {
-      console.error('Push subscription failed:', err);
-    }
-  };
-
-  const sendSubscriptionToServer = async (subscription: PushSubscription) => {
-    try {
-      await fetch('/api/notifications/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(subscription),
-      });
-    } catch {
-      // Silent fail - app still works without push
-    }
   };
 
   if (!showBanner || permissionState !== 'default' || dismissed) {

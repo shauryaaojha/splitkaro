@@ -52,6 +52,23 @@ export const appUrl = env("NEXT_PUBLIC_APP_URL", "http://localhost:3000").replac
 const googleClientId = process.env.GOOGLE_CLIENT_ID ?? "";
 const googleClientSecret = process.env.GOOGLE_CLIENT_SECRET ?? "";
 
+/**
+ * Web Push (VAPID) keys.
+ *
+ * Optional: without both keys `isConfigured` is false and push sends are
+ * skipped; in-app notifications keep working.
+ */
+const vapidPublicKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? "";
+const vapidPrivateKey = process.env.VAPID_PRIVATE_KEY ?? "";
+
+export const webPush = {
+  publicKey: vapidPublicKey,
+  privateKey: vapidPrivateKey,
+  /** Contact the push services can reach; Apple requires mailto: or https: */
+  subject: process.env.VAPID_SUBJECT || `mailto:${smtp.user}`,
+  isConfigured: Boolean(vapidPublicKey && vapidPrivateKey),
+} as const;
+
 export const google = {
   clientId: googleClientId,
   clientSecret: googleClientSecret,

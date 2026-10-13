@@ -15,10 +15,12 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Invalid push subscription' }, { status: 400 });
     }
 
-    // Store push subscription on the user (upsert by endpoint)
-    await User.findByIdAndUpdate(user._id, {
-      $pull: { pushSubscriptions: { endpoint: subscription.endpoint } },
-    });
+    // A device belongs to whoever is logged in on it now, so detach this
+    // endpoint from every account (including earlier ones) before re-adding it.
+    await User.updateMany(
+      { 'pushSubscriptions.endpoint': subscription.endpoint },
+      { $pull: { pushSubscriptions: { endpoint: subscription.endpoint } } }
+    );
 
     await User.findByIdAndUpdate(user._id, {
       $push: {
