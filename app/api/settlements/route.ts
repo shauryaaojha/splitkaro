@@ -16,6 +16,10 @@ const settlementSchema = z.object({
   payeeId: objectIdSchema,
   amount: z.number().positive(),
   markedManually: z.boolean().default(true),
+  method: z.enum(["manual", "upi_app"]).default("manual"),
+  upiStatus: z.enum(["SUCCESS", "SUBMITTED"]).optional(),
+  upiTxnId: z.string().trim().min(1).max(64).optional(),
+  upiTxnRef: z.string().trim().min(1).max(64).optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -27,6 +31,7 @@ export async function POST(request: NextRequest) {
 
     const body = await request.json();
     const validated = settlementSchema.parse(body);
+    const viaUpi = validated.method === "upi_app";
 
     const group = await Group.findOne({
       _id: validated.groupId,
@@ -47,6 +52,14 @@ export async function POST(request: NextRequest) {
     const isPayeeMember = group.members.some(m => m.userId.toString() === validated.payeeId);
     if (!isPayeeMember) {
       return NextResponse.json({ error: "Payee is not a member of the group" }, { status: 400 });
+    }
+
+    // The UPI return URL can be reloaded; the same transaction is recorded once.
+    if (viaUpi && validated.upiTxnId) {
+      const existing = await Settlement.findOne({ payer: user._id, upiTxnId: validated.upiTxnId });
+      if (existing) {
+        return NextResponse.json({ data: existing, message: "Settlement already recorded" });
+      }
     }
 
     const balances = await calculateGroupBalances(validated.groupId);
@@ -71,16 +84,27 @@ export async function POST(request: NextRequest) {
       payer: validated.payerId,
       payee: validated.payeeId,
       amount,
-      markedManually: validated.markedManually,
+      markedManually: !viaUpi,
+      method: validated.method,
+      ...(viaUpi && {
+        upiStatus: validated.upiStatus,
+        upiTxnId: validated.upiTxnId,
+        upiTxnRef: validated.upiTxnRef,
+      }),
     });
+
+    const txnLabel = viaUpi && validated.upiTxnId ? ` (UPI txn ${validated.upiTxnId})` : "";
 
     await Notification.create({
       userId: validated.payeeId,
       type: "settled",
-      message: `${user.name} settled ₹${amount.toFixed(2)} with you in "${group.name}".`,
+      message: viaUpi
+        ? `${user.name} paid you ₹${amount.toFixed(2)} via UPI in "${group.name}"${txnLabel}. Not received? Open the group to report it.`
+        : `${user.name} settled ₹${amount.toFixed(2)} with you in "${group.name}".`,
       metadata: {
         groupId: group._id.toString(),
         settlementId: settlement._id.toString(),
+        method: validated.method,
       },
       isRead: false,
     });
@@ -89,6 +113,10 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.errors[0]?.message || "Validation failed" }, { status: 400 });
+    }
+    // Two concurrent submits of the same UPI transaction: the unique index let one through.
+    if ((err as { code?: number })?.code === 11000) {
+      return NextResponse.json({ data: null, message: "Settlement already recorded" });
     }
     const message = err instanceof Error ? err.message : "Failed to create settlement";
     return NextResponse.json({ error: message }, { status: 500 });

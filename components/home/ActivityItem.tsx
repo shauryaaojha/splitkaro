@@ -7,7 +7,8 @@ type NotificationType =
   | 'settled'
   | 'group_joined'
   | 'friend_request'
-  | 'friend_accepted';
+  | 'friend_accepted'
+  | 'settlement_disputed';
 
 interface ActivityItemProps {
   activity: {
@@ -47,6 +48,11 @@ const typeConfig: Record<
     icon: 'person_outline',
     bgVar: 'var(--t-success-bg)',
     colorVar: 'var(--t-success)',
+  },
+  settlement_disputed: {
+    icon: 'report',
+    bgVar: 'var(--t-danger-bg)',
+    colorVar: 'var(--t-danger)',
   },
 };
 

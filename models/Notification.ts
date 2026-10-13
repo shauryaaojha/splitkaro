@@ -18,6 +18,7 @@ const NotificationSchema = new Schema<INotification>(
         "group_joined",
         "friend_request",
         "friend_accepted",
+        "settlement_disputed",
       ],
       required: true,
     },

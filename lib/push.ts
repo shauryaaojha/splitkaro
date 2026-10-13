@@ -23,6 +23,7 @@ const TITLES: Record<NotificationType, string> = {
   group_joined: "Group update",
   friend_request: "Friend request",
   friend_accepted: "Friend request accepted",
+  settlement_disputed: "Payment not received",
 };
 
 /** Where tapping the notification should take the user. */

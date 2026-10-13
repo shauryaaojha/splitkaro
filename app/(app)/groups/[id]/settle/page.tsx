@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { useGroup } from '@/hooks/useGroup';
 import { useToast } from '@/components/ui/Toast';
@@ -10,6 +10,7 @@ import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 import Skeleton from '@/components/ui/Skeleton';
 import UpiQRCode from '@/components/settle/UpiQRCode';
+import UpiPayButtons from '@/components/settle/UpiPayButtons';
 
 interface PopulatedMember {
   userId: string | {
@@ -38,6 +39,15 @@ export default function SettleUpPage() {
 
   const { group, isLoading: loadingGroup } = useGroup(groupId);
   const [saving, setSaving] = useState(false);
+  const [pendingNotice, setPendingNotice] = useState(false);
+  const handledUpiResult = useRef(false);
+
+  // Set by the Android app's UPI bridge when it returns here (see UpiPayActivity).
+  const upiStatus = searchParams.get('upi_status');
+  const upiTxnId = searchParams.get('upi_txn') || undefined;
+  const upiTxnRef = searchParams.get('upi_ref') || undefined;
+
+  const settlePath = `/groups/${groupId}/settle?payerId=${payerId}&payeeId=${payeeId}&amount=${amountStr}`;
 
   const getMemberDetails = (member: PopulatedMember) => {
     if (typeof member.userId === 'string') {
@@ -63,7 +73,14 @@ export default function SettleUpPage() {
   const payer = members.map(getMemberDetails).find((m) => m._id === payerId);
   const payee = members.map(getMemberDetails).find((m) => m._id === payeeId);
 
-  const handleMarkAsPaid = async () => {
+  type SettleExtras = {
+    method: 'manual' | 'upi_app';
+    upiStatus?: 'SUCCESS' | 'SUBMITTED';
+    upiTxnId?: string;
+    upiTxnRef?: string;
+  };
+
+  const recordSettlement = async (extras: SettleExtras) => {
     setSaving(true);
     try {
       const res = await fetch('/api/settlements', {
@@ -74,7 +91,8 @@ export default function SettleUpPage() {
           payerId,
           payeeId,
           amount,
-          markedManually: true,
+          markedManually: extras.method === 'manual',
+          ...extras,
         }),
       });
 
@@ -83,7 +101,9 @@ export default function SettleUpPage() {
         throw new Error(json.error || 'Failed to settle debt');
       }
 
-      toast.success('Settlement recorded successfully!');
+      toast.success(
+        extras.method === 'upi_app' ? 'UPI payment recorded!' : 'Settlement recorded successfully!'
+      );
       router.replace(`/groups/${groupId}`);
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Failed to settle debt';
@@ -92,6 +112,41 @@ export default function SettleUpPage() {
       setSaving(false);
     }
   };
+
+  const handleMarkAsPaid = () => recordSettlement({ method: 'manual' });
+
+  // Handle the result the Android app's UPI bridge appended to this URL.
+  useEffect(() => {
+    if (!upiStatus || handledUpiResult.current || !payer || !payee) return;
+    handledUpiResult.current = true;
+
+    // Drop the result params so a reload can't act on them again.
+    router.replace(settlePath);
+
+    // Deferred so the state updates happen outside the effect body.
+    Promise.resolve().then(() => {
+      switch (upiStatus) {
+        case 'SUCCESS':
+          void recordSettlement({ method: 'upi_app', upiStatus: 'SUCCESS', upiTxnId, upiTxnRef });
+          break;
+        case 'SUBMITTED':
+          setPendingNotice(true);
+          break;
+        case 'CANCELLED':
+          toast.error('Payment cancelled.');
+          break;
+        case 'NO_APP':
+          toast.error('No UPI app found on this phone. Scan the QR code from another phone instead.');
+          break;
+        case 'UNKNOWN':
+          toast.error('Your UPI app did not report a result. If the money was sent, mark it as paid below.');
+          break;
+        default:
+          toast.error('Payment failed in your UPI app. No money was recorded.');
+      }
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [upiStatus, payer, payee]);
 
   if (loadingGroup) {
     return (
@@ -185,20 +240,50 @@ export default function SettleUpPage() {
         </div>
       </Card>
 
-      {/* Settle Actions — scan to pay, or record a payment made elsewhere */}
+      {/* Settle Actions — pay in a UPI app, scan the QR, or record a payment made elsewhere */}
       <div className="flex flex-col gap-4">
-        <UpiQRCode
-          payeeUpiId={payee.upiId || 'payee@upi'}
-          payeeName={payee.name || 'Payee'}
-          amount={amount}
-        />
+        {pendingNotice && (
+          <div
+            className="p-4 mx-4 rounded-xl font-['DM_Sans'] text-sm text-center"
+            style={{
+              border: '2px solid var(--t-border)',
+              background: 'var(--t-card-bg)',
+              color: 'var(--t-on-surface)',
+            }}
+          >
+            Your bank is still processing this payment. Once your UPI app shows it as successful,
+            tap <b>Mark as manually paid</b> below.
+          </div>
+        )}
 
-        <p
-          className="text-xs font-['DM_Sans'] text-center px-6"
-          style={{ color: 'var(--t-on-surface-muted)' }}
-        >
-          Open any UPI app on your phone and scan this code to pay {payee.name}.
-        </p>
+        {payee.upiId ? (
+          <>
+            <UpiPayButtons
+              payeeUpiId={payee.upiId}
+              payeeName={payee.name || 'Payee'}
+              amount={amount}
+              returnPath={settlePath}
+              confirming={saving}
+              onConfirmPaid={() => recordSettlement({ method: 'upi_app' })}
+            />
+
+            <UpiQRCode payeeUpiId={payee.upiId} payeeName={payee.name || 'Payee'} amount={amount} />
+
+            <p
+              className="text-xs font-['DM_Sans'] text-center px-6"
+              style={{ color: 'var(--t-on-surface-muted)' }}
+            >
+              Or scan this code with any UPI app to pay {payee.name}.
+            </p>
+          </>
+        ) : (
+          <p
+            className="text-sm font-['DM_Sans'] text-center px-6"
+            style={{ color: 'var(--t-on-surface-muted)' }}
+          >
+            {payee.name} hasn&apos;t added a UPI ID yet. Pay them another way and mark it as paid below.
+          </p>
+        )}
 
         {/* Mark paid manually ghost button */}
         <div className="mt-4 flex justify-center">

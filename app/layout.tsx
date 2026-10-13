@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import ServiceWorkerRegister from "@/components/layout/ServiceWorkerRegister";
+import PlatformDetector from "@/components/layout/PlatformDetector";
 import { ToastProvider } from "@/components/ui/Toast";
 import { ThemeProvider } from "@/components/layout/ThemeProvider";
 import SplashScreen from "@/components/layout/SplashScreen";
@@ -53,6 +54,7 @@ export default function RootLayout({
         <SplashScreen />
         <ThemeProvider>
           <ServiceWorkerRegister />
+          <PlatformDetector />
           <ToastProvider>{children}</ToastProvider>
         </ThemeProvider>
       </body>

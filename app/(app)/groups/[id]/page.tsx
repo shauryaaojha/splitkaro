@@ -12,6 +12,7 @@ import GroupAnalytics from '@/components/groups/GroupAnalytics';
 import Skeleton from '@/components/ui/Skeleton';
 import Button from '@/components/ui/Button';
 import Avatar from '@/components/ui/Avatar';
+import SettlementHistory from '@/components/settle/SettlementHistory';
 import { useGroup } from '@/hooks/useGroup';
 import { useExpenses } from '@/hooks/useExpenses';
 import { useAuth } from '@/hooks/useAuth';
@@ -63,7 +64,7 @@ export default function GroupDetailPage() {
 
   // Fetched on load, not just on the Settle tab: the hero badge, the Balances
   // tab and the per-member amounts all read from it.
-  const { data: transactions, isLoading: loadingSettle } = useSWR<SimplifiedTransaction[]>(
+  const { data: transactions, isLoading: loadingSettle, mutate: mutateSettle } = useSWR<SimplifiedTransaction[]>(
     groupId ? `/api/groups/${groupId}/settle` : null,
     settleFetcher,
     { revalidateOnFocus: true }
@@ -384,6 +385,8 @@ export default function GroupDetailPage() {
                 })}
               </div>
             )}
+
+            <SettlementHistory groupId={groupId} myId={myMemberId} onChanged={() => mutateSettle()} />
           </div>
         )}
 

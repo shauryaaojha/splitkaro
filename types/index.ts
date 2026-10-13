@@ -103,8 +103,17 @@ export interface ISettlement extends Document {
   payee: Types.ObjectId | string;
   amount: number;
   markedManually: boolean;
+  /** How the payer settled: recorded by hand, or paid through a UPI app */
+  method: SettlementMethod;
+  /** Result reported by the UPI app (Android app only); not bank-verified */
+  upiStatus?: "SUCCESS" | "SUBMITTED";
+  /** UPI transaction ID / reference reported by the UPI app */
+  upiTxnId?: string;
+  upiTxnRef?: string;
   createdAt: Date;
 }
+
+export type SettlementMethod = "manual" | "upi_app";
 
 // ─── Notification ───────────────────────────────────────────────────────────
 
@@ -113,7 +122,8 @@ export type NotificationType =
   | "settled"
   | "group_joined"
   | "friend_request"
-  | "friend_accepted";
+  | "friend_accepted"
+  | "settlement_disputed";
 
 export interface INotification extends Document {
   _id: Types.ObjectId;
